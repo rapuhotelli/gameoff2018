@@ -1,0 +1,23 @@
+{
+  "name": "gameoff2018",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "webpack --watch --mode development & webpack-dev-server --mode development"
+  },
+  "dependencies": {
+    "phaser": "3.15.1"
+  },
+  "devDependencies": {
+    "tslint": "^5.11.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.1.6",
+    "expose-loader": "^0.7.5",
+    "raw-loader": "^0.5.1",
+    "ts-loader": "^5.3.0",
+    "webpack": "^4.24.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  }
+}
