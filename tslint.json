@@ -1,6 +1,6 @@
 {
   "extends": [
-    "tslint-react-recommended"
+    "tslint-eslint-rules"
   ],
   "rules": {
     "whitespace": [true, "check-module"],
@@ -10,7 +10,6 @@
     "quotemark": [
       true,
       "single",
-      "jsx-single",
       "avoid-escape"
     ],
     "semicolon": [
@@ -46,9 +45,6 @@
       }
     ],
     "no-duplicate-imports": false,
-    "jsx-alignment": true,
-    "jsx-no-bind": true,
-    "jsx-no-lambda": false,
     "max-classes-per-file": [
       false
     ]
