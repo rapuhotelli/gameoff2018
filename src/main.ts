@@ -8,11 +8,13 @@ const config: GameConfig = {
   type: Phaser.AUTO,
   parent: 'game',
   scene: [MainScene, HUD],
-  backgroundColor: '#663399',
-    // @ts-ignore
+  // @ts-ignore
+  // pixelArt: true,
+  // @ts-ignore
   audio: {
     disableWebAudio: true,
   },
+  backgroundColor: '#663399',
 }
 
 // game class
@@ -24,12 +26,12 @@ export class Game extends Phaser.Game {
 
 // when the page is loaded, create our game instance
 function resize(game) {
-  var canvas = document.querySelector('canvas')
-  var windowWidth = window.innerWidth
-  var windowHeight = window.innerHeight
-  var windowRatio = windowWidth / windowHeight
+  const canvas = document.querySelector('canvas')
+  const windowWidth = window.innerWidth
+  const windowHeight = window.innerHeight
+  const windowRatio = windowWidth / windowHeight
   // @ts-ignore
-  var gameRatio = game.config.width / game.config.height
+  const gameRatio = game.config.width / game.config.height
   if (windowRatio < gameRatio) {
     canvas.style.width = windowWidth + 'px'
     canvas.style.height = (windowWidth / gameRatio) + 'px'
@@ -41,6 +43,6 @@ function resize(game) {
 
 window.onload = () => {
   const game = new Game(config)
-  resize(game)
+  // resize(game)
 }
 // */
