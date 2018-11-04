@@ -8,6 +8,7 @@ const config: GameConfig = {
   type: Phaser.AUTO,
   parent: 'game',
   scene: [MainScene, HUD],
+  backgroundColor: '#663399',
     // @ts-ignore
   audio: {
     disableWebAudio: true,
