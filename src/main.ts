@@ -1,10 +1,12 @@
 import 'phaser'
+// main game configuration
+import { GAME_HEIGHT, GAME_WIDTH } from './config'
 import { HUD } from './scenes/HUD'
 import { MainScene } from './scenes/mainScene'
-// main game configuration
+
 const config: GameConfig = {
-  width: 1024,
-  height: 768,
+  width: GAME_WIDTH,
+  height: GAME_HEIGHT,
   type: Phaser.AUTO,
   parent: 'game',
   scene: [MainScene, HUD],

@@ -1,17 +1,13 @@
 import 'phaser'
 import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 
-const minusEighth = (number: number) => number - number/8
+import { GRID_HEIGHT, GRID_WIDTH, LEVEL_HEIGHT } from '../config'
 
-export const gridSize = {
-  width: 32,
-  height: 24,
-}
 
 const getWorldCenterForTile = (tile: Phaser.Tilemaps.Tile) => {
   return {
-    x: tile.getLeft() + gridSize.width / 2,
-    y: tile.getTop() + gridSize.height / 2,
+    x: tile.getLeft() + GRID_WIDTH / 2,
+    y: tile.getTop() + GRID_HEIGHT / 2,
   }
 }
 
@@ -47,7 +43,8 @@ export class MainScene extends Phaser.Scene {
 
   create(): void {
     const levelGraphic = this.add.image(512, 384, 'levelGraphic')
-    levelGraphic.displayHeight = levelGraphic.height - levelGraphic.height/8 // 640
+    // levelGraphic.displayHeight = levelGraphic.height - levelGraphic.height/8 // 640
+    levelGraphic.displayHeight = LEVEL_HEIGHT
     const GRID_WIDTH = 32
     const GRID_HEIGHT = 24 // 24
 
@@ -62,7 +59,7 @@ export class MainScene extends Phaser.Scene {
 
 
     this.debugText = this.add.text(50, 50, 'null')
-    console.log(this.input.activePointer.positionToCamera(this.cameras.main))
+    // console.log(this.input.activePointer.positionToCamera(this.cameras.main))
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
     this.gridCursor.strokeRect(0, 0, 32, 28)
@@ -73,7 +70,7 @@ export class MainScene extends Phaser.Scene {
   }
   update(): void {
     this.input.activePointer.positionToCamera(this.cameras.main, this.cursorPosition)
-    // this.debugText.setText(`x:${this.cursorPosition.x} y:${this.cursorPosition.y}`)
+    this.debugText.setText(`x:${this.cursorPosition.x} y:${this.cursorPosition.y}`)
     const cursorTile = this.gridMap.getTileAtWorldXY(this.cursorPosition.x, this.cursorPosition.y)
 
     if (this.input.manager.activePointer.isDown) {

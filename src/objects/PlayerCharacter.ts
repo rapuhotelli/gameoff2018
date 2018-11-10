@@ -1,6 +1,6 @@
 
 // ToDo: add character layer
-import { gridSize } from '../scenes/mainScene'
+import { getWorldCenterForTile } from '../utils'
 
 export interface PCM {
   newCharacter: (options: Options) => void
@@ -75,7 +75,7 @@ export class PlayerCharacter {
   create(gridMap: Phaser.Tilemaps.Tilemap) {
     this.gridMap = gridMap
     this.position = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
-    const positionInWorld = this.getWorldCenterForTile(this.position)
+    const positionInWorld = getWorldCenterForTile(this.position)
     this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
   }
 
@@ -87,10 +87,5 @@ export class PlayerCharacter {
 
   }
 
-  getWorldCenterForTile(tile: Phaser.Tilemaps.Tile) {
-    return {
-      x: tile.getLeft() + gridSize.width / 2,
-      y: tile.getTop() + gridSize.height / 2,
-    }
-  }
+
 }
