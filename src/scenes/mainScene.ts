@@ -30,7 +30,10 @@ export class MainScene extends Phaser.Scene {
     })
     this.cursorPosition = {x: 0, y: 0}
     this.playerCharacters = PCManager(this)
-    this.playerCharacters.newCharacter('Bard-M-01', { startingPosition: {x: 20, y: 16} })
+    this.playerCharacters.newCharacter( {
+      spriteSheet: 'Bard-M-01',
+      startingPosition: {x: 20, y: 16},
+    })
   }
 
   preload(): void {

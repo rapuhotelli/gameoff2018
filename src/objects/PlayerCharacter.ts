@@ -3,7 +3,7 @@
 import { gridSize } from '../scenes/mainScene'
 
 export interface PCM {
-  newCharacter: (sheet: string, options: Options) => void
+  newCharacter: (options: Options) => void
   preloadAll: () => void
   createAll: (gridMap: Phaser.Tilemaps.Tilemap) => void
   updateAll: () => void
@@ -17,6 +17,7 @@ interface GridPosition {
 
 interface Options {
   startingPosition: GridPosition
+  spriteSheet: string
   // position: Phaser.Tilemaps.Tile
 }
 
@@ -26,8 +27,8 @@ export function PCManager(scene: Phaser.Scene):PCM {
   const characters: Array<PlayerCharacter> = []
 
   // ToDo add better options
-  function newCharacter(sheet: string, options: Options) {
-    characters[characterIndex] = new PlayerCharacter(scene, sheet, characterIndex++, options)
+  function newCharacter(options: Options) {
+    characters[characterIndex] = new PlayerCharacter(scene, characterIndex++, options)
   }
 
   function preloadAll() {
@@ -61,15 +62,14 @@ export class PlayerCharacter {
   private position: Phaser.Tilemaps.Tile // current game state position
 
 
-  constructor(scene: Phaser.Scene, sheet: string, characterIndex: number, options: Options) {
+  constructor(scene: Phaser.Scene, characterIndex: number, options: Options) {
     this.scene = scene
-    this.sheet = sheet
     this.key = `pc${characterIndex}`
     this.options = options
   }
 
   preload() {
-    this.scene.load.spritesheet(this.key, `assets/${this.sheet}.png`, { frameWidth: 24, frameHeight: 32 })
+    this.scene.load.spritesheet(this.key, `assets/${this.options.spriteSheet}.png`, { frameWidth: 24, frameHeight: 32 })
   }
 
   create(gridMap: Phaser.Tilemaps.Tilemap) {
