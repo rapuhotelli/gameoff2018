@@ -1,6 +1,19 @@
 import 'phaser'
+import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 
 const minusEighth = (number: number) => number - number/8
+
+export const gridSize = {
+  width: 32,
+  height: 24,
+}
+
+const getWorldCenterForTile = (tile: Phaser.Tilemaps.Tile) => {
+  return {
+    x: tile.getLeft() + gridSize.width / 2,
+    y: tile.getTop() + gridSize.height / 2,
+  }
+}
 
 export class MainScene extends Phaser.Scene {
     // private phaserSprite: Phaser.GameObjects.Sprite;
@@ -8,6 +21,7 @@ export class MainScene extends Phaser.Scene {
   private gridMap: Phaser.Tilemaps.Tilemap
   private cursorPosition: {x: number, y: number}
   private gridCursor: Phaser.GameObjects.Graphics
+  private playerCharacters: PCM
 
   constructor() {
     super({
@@ -15,12 +29,17 @@ export class MainScene extends Phaser.Scene {
       active: true,
     })
     this.cursorPosition = {x: 0, y: 0}
+    this.playerCharacters = PCManager(this)
+    this.playerCharacters.newCharacter('Bard-M-01', { startingPosition: {x: 20, y: 16} })
   }
 
   preload(): void {
     this.load.image('logo', 'http://labs.phaser.io/assets/sprites/phaser3-logo.png')
-    this.load.image('gridSquare', 'assets/grid.png')
+    this.load.image('gridSquare', 'assets/grid-wide.png')
     this.load.image('levelGraphic', 'assets/map1-sketch.png')
+
+    //Bard-M-01
+    this.playerCharacters.preloadAll()
   }
 
   create(): void {
@@ -34,7 +53,7 @@ export class MainScene extends Phaser.Scene {
       gridTileMap[y] = Array(GRID_WIDTH).fill(0)
     }
 
-    this.gridMap = this.make.tilemap({ data: gridTileMap, tileWidth: 32, tileHeight: 32 - (32/8) })
+    this.gridMap = this.make.tilemap({ data: gridTileMap, tileWidth: 32, tileHeight: 28 })
     const tiles = this.gridMap.addTilesetImage('gridSquare')
     const layer = this.gridMap.createStaticLayer(0, tiles, 0, levelGraphic.height/8/2)
 
@@ -43,14 +62,22 @@ export class MainScene extends Phaser.Scene {
     console.log(this.input.activePointer.positionToCamera(this.cameras.main))
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
-    this.gridCursor.strokeRect(0, 0, 32, 32 - (32/8))
+    this.gridCursor.strokeRect(0, 0, 32, 28)
     this.gridCursor.setPosition(0, 0)
+
+    this.playerCharacters.createAll(this.gridMap)
 
   }
   update(): void {
     this.input.activePointer.positionToCamera(this.cameras.main, this.cursorPosition)
     // this.debugText.setText(`x:${this.cursorPosition.x} y:${this.cursorPosition.y}`)
     const cursorTile = this.gridMap.getTileAtWorldXY(this.cursorPosition.x, this.cursorPosition.y)
+
+    if (this.input.manager.activePointer.isDown) {
+      const sourceTileX = this.gridMap.worldToTileX(this.cursorPosition.x)
+      const sourceTileY = this.gridMap.worldToTileY(this.cursorPosition.y)
+      this.debugText.setText(`${sourceTileX} ${sourceTileY}`)
+    }
 
     if (cursorTile) {
       if (!this.gridCursor.visible) {
@@ -62,5 +89,8 @@ export class MainScene extends Phaser.Scene {
         this.gridCursor.setVisible(false)
       }
     }
+
+    this.playerCharacters.updateAll()
+
   }
 }

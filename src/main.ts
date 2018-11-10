@@ -25,6 +25,7 @@ export class Game extends Phaser.Game {
 }
 
 // when the page is loaded, create our game instance
+/*
 function resize(game) {
   const canvas = document.querySelector('canvas')
   const windowWidth = window.innerWidth
@@ -40,7 +41,7 @@ function resize(game) {
     canvas.style.height = windowHeight + 'px'
   }
 }
-
+*/
 window.onload = () => {
   const game = new Game(config)
   // resize(game)
