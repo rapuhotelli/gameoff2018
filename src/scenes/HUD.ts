@@ -1,6 +1,7 @@
 import 'phaser'
 import { GAME_HEIGHT, GAME_WIDTH } from '../config'
 import { EndTurnButton } from '../objects/Button'
+import { sceneBridge } from '../utils'
 
 export class HUD extends Phaser.Scene {
   
@@ -14,12 +15,11 @@ export class HUD extends Phaser.Scene {
   }
 
   create() {
-    console.log('creating hud!!')
-    this.add.text(100, 100, 'I am an UI scene!', {fill: '#ffffff'})
+    // this.add.text(100, 100, 'I am an UI scene!', {fill: '#ffffff'})
     
     this.endTurnButton = new EndTurnButton(this)
     this.endTurnButton.setOnPress(() => {
-      console.log('wooo')
+      sceneBridge.get('main').debugger('END TURN')
     })
     this.endTurnButton.create()
   }

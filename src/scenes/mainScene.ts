@@ -1,23 +1,17 @@
 import 'phaser'
-import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
-
 import { GRID_HEIGHT, GRID_WIDTH, LEVEL_HEIGHT } from '../config'
+import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
+import { createDebugger, createScene, debounce, sceneBridge } from '../utils'
 
-
-const getWorldCenterForTile = (tile: Phaser.Tilemaps.Tile) => {
-  return {
-    x: tile.getLeft() + GRID_WIDTH / 2,
-    y: tile.getTop() + GRID_HEIGHT / 2,
-  }
-}
-
-export class MainScene extends Phaser.Scene {
+class MainSceneClass extends Phaser.Scene {
     // private phaserSprite: Phaser.GameObjects.Sprite;
-  private debugText: Phaser.GameObjects.Text
+  // private debugText: Phaser.GameObjects.Text
   private gridMap: Phaser.Tilemaps.Tilemap
   private cursorPosition: {x: number, y: number}
   private gridCursor: Phaser.GameObjects.Graphics
   private playerCharacters: PCM
+  private debugger: (message: string) => void
+  private clickTile: () => void
 
   constructor() {
     super({
@@ -30,6 +24,7 @@ export class MainScene extends Phaser.Scene {
       spriteSheet: 'Bard-M-01',
       startingPosition: {x: 20, y: 16},
     })
+    sceneBridge.connect(this, 'main')
   }
 
   preload(): void {
@@ -58,7 +53,9 @@ export class MainScene extends Phaser.Scene {
     const layer = this.gridMap.createStaticLayer(0, tiles, 0, levelGraphic.height/8/2)
 
 
-    this.debugText = this.add.text(50, 50, 'null')
+    // this.debugText =
+    this.debugger = createDebugger(true, this.add.text(50, 50, 'null'))
+
     // console.log(this.input.activePointer.positionToCamera(this.cameras.main))
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
@@ -67,16 +64,21 @@ export class MainScene extends Phaser.Scene {
 
     this.playerCharacters.createAll(this.gridMap)
 
-  }
-  update(): void {
-    this.input.activePointer.positionToCamera(this.cameras.main, this.cursorPosition)
-    this.debugText.setText(`x:${this.cursorPosition.x} y:${this.cursorPosition.y}`)
-    const cursorTile = this.gridMap.getTileAtWorldXY(this.cursorPosition.x, this.cursorPosition.y)
-
-    if (this.input.manager.activePointer.isDown) {
+    this.clickTile = debounce(() => {
       const sourceTileX = this.gridMap.worldToTileX(this.cursorPosition.x)
       const sourceTileY = this.gridMap.worldToTileY(this.cursorPosition.y)
-      this.debugText.setText(`${sourceTileX} ${sourceTileY}`)
+      // Clicks inside grid
+      this.debugger(`${sourceTileX} ${sourceTileY}`)
+    })
+  }
+
+  update(): void {
+    this.input.activePointer.positionToCamera(this.cameras.main, this.cursorPosition)
+    // this.debugText.setText(`x:${this.cursorPosition.x}\n y:${this.cursorPosition.y}`)
+    const cursorTile = this.gridMap.getTileAtWorldXY(this.cursorPosition.x, this.cursorPosition.y)
+
+    if (this.input.manager.activePointer.isDown && cursorTile) {
+      this.clickTile()
     }
 
     if (cursorTile) {
@@ -94,3 +96,6 @@ export class MainScene extends Phaser.Scene {
 
   }
 }
+
+const MainScene = createScene(MainSceneClass)
+export { MainScene }
