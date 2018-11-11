@@ -60,7 +60,7 @@ export class PlayerCharacter {
   private gridMap: Phaser.Tilemaps.Tilemap | null // reference to scene grid map (todo make own layer?)
   private targetPosition: Phaser.Tilemaps.Tile // position to end up at after movement
   private position: Phaser.Tilemaps.Tile // current game state position
-
+  private characterSprite: Phaser.GameObjects.Sprite
 
   constructor(scene: Phaser.Scene, characterIndex: number, options: Options) {
     this.scene = scene
@@ -76,7 +76,8 @@ export class PlayerCharacter {
     this.gridMap = gridMap
     this.position = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
+    this.characterSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
+    
   }
 
   update() {

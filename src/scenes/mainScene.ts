@@ -1,5 +1,6 @@
 import 'phaser'
 import { GRID_HEIGHT, GRID_WIDTH, LEVEL_HEIGHT } from '../config'
+import * as GameState from '../objects/GameState'
 import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 import { createDebugger, createScene, debounce, sceneBridge } from '../utils'
 
@@ -24,7 +25,7 @@ class MainSceneClass extends Phaser.Scene {
       spriteSheet: 'Bard-M-01',
       startingPosition: {x: 20, y: 16},
     })
-    sceneBridge.connect(this, 'main')
+    sceneBridge.connect(this, 'MainScene')
   }
 
   preload(): void {
@@ -43,10 +44,14 @@ class MainSceneClass extends Phaser.Scene {
     const GRID_WIDTH = 32
     const GRID_HEIGHT = 24 // 24
 
+    /*
     const gridTileMap = []
     for (let y = 0; y < GRID_HEIGHT; y++) {
       gridTileMap[y] = Array(GRID_WIDTH).fill(0)
     }
+    */
+
+    const gridTileMap = GameState.createGridTileMap()
 
     this.gridMap = this.make.tilemap({ data: gridTileMap, tileWidth: 32, tileHeight: 28 })
     const tiles = this.gridMap.addTilesetImage('gridSquare')
@@ -69,6 +74,7 @@ class MainSceneClass extends Phaser.Scene {
       const sourceTileY = this.gridMap.worldToTileY(this.cursorPosition.y)
       // Clicks inside grid
       this.debugger(`${sourceTileX} ${sourceTileY}`)
+      this.data.set('selectedTile', {x: sourceTileX, y: sourceTileY})
     })
   }
 

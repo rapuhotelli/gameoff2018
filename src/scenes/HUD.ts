@@ -6,7 +6,8 @@ import { sceneBridge } from '../utils'
 export class HUD extends Phaser.Scene {
   
   private endTurnButton: EndTurnButton
-  
+  private mainScene: Phaser.Scene
+
   constructor() {
     super({
       key: 'HUD',
@@ -15,7 +16,9 @@ export class HUD extends Phaser.Scene {
   }
 
   create() {
-    // this.add.text(100, 100, 'I am an UI scene!', {fill: '#ffffff'})
+    this.mainScene = sceneBridge.get('MainScene')
+
+
     
     this.endTurnButton = new EndTurnButton(this)
     this.endTurnButton.setOnPress(() => {
