@@ -1,6 +1,7 @@
 
 // ToDo: add character layer
 import { getWorldCenterForTile } from '../utils'
+import LevelManager from './LevelManager'
 
 export interface PCM {
   newCharacter: (options: Options) => void
@@ -77,7 +78,7 @@ export class PlayerCharacter {
     this.position = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
     const positionInWorld = getWorldCenterForTile(this.position)
     this.characterSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
-    
+
   }
 
   update() {

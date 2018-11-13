@@ -49,6 +49,7 @@ const scenes: ISceneList = {}
 
 export const sceneBridge = {
   connect: function<T extends Phaser.Scene>(scene: T, name: string) {
+    console.log('Connecting ', name)
     scenes[name] = scene
   },
   get(name: string) {

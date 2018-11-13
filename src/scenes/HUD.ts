@@ -16,13 +16,11 @@ export class HUD extends Phaser.Scene {
   }
 
   create() {
-    this.mainScene = sceneBridge.get('MainScene')
+    // this.mainScene = sceneBridge.get('MainScene')
 
-
-    
     this.endTurnButton = new EndTurnButton(this)
     this.endTurnButton.setOnPress(() => {
-      sceneBridge.get('main').debugger('END TURN')
+      sceneBridge.get('MainScene').debugger('END TURN')
     })
     this.endTurnButton.create()
   }
