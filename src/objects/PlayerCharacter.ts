@@ -9,6 +9,7 @@ export interface PCM {
   createAll: (gridMap: Phaser.Tilemaps.Tilemap) => void
   updateAll: () => void
   characters: Array<PlayerCharacter>
+  move: () => void
 }
 
 interface GridPosition {
@@ -44,12 +45,17 @@ export function PCManager(scene: Phaser.Scene):PCM {
     characters.map((pc: PlayerCharacter) => pc.update())
   }
 
+  function move() {
+    characters.map((pc: PlayerCharacter) => pc.move())
+  }
+
   return {
     newCharacter,
     preloadAll,
     createAll,
     updateAll,
     characters,
+    move,
   }
 }
 
@@ -76,17 +82,27 @@ export class PlayerCharacter {
   create(gridMap: Phaser.Tilemaps.Tilemap) {
     this.gridMap = gridMap
     this.position = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
+    this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x + 2, this.options.startingPosition.y)
+
     const positionInWorld = getWorldCenterForTile(this.position)
     this.characterSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
-
   }
 
   update() {
     // tee coordinate mapper homma
+    const positionInWorld = getWorldCenterForTile(this.position)
+    this.characterSprite.setPosition(positionInWorld.x, positionInWorld.y)
   }
 
   setDestination(position: GridPosition) {
 
+  }
+
+  move() {
+    this.position = this.targetPosition
+    if (this.gridMap) {
+      this.targetPosition = this.gridMap.getTileAt(this.targetPosition.x + 2, this.targetPosition.y)
+    }
   }
 
 

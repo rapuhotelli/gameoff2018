@@ -4,6 +4,12 @@ import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 import { debounce } from '../utils'
 import { sceneBridge } from '../utils'
 
+enum GamePhase {
+  // Init phase?
+  Plan,
+  Act,
+}
+
 export default class LevelManager extends Phaser.Scene {
 
   private key: string
@@ -13,6 +19,7 @@ export default class LevelManager extends Phaser.Scene {
   private clickTile: () => void
   private cursorPosition: {x: number, y: number}
   private playerCharacters: PCM
+  private gamePhase: GamePhase
 
   constructor(key: string) {
     super(key)
@@ -26,6 +33,10 @@ export default class LevelManager extends Phaser.Scene {
       spriteSheet: 'Bard-M-01',
       startingPosition: {x: 20, y: 16},
     })
+
+    this.gamePhase = GamePhase.Plan
+
+    sceneBridge.connect(this, 'LevelManager')
   }
 
   /*
@@ -89,8 +100,25 @@ export default class LevelManager extends Phaser.Scene {
       }
     }
 
+    if (this.gamePhase === GamePhase.Act) {
+      this.gridCursor.setVisible(false)
+    }
+
     this.playerCharacters.updateAll()
 
   }
 
+  endTurn() {
+    if (this.gamePhase !== GamePhase.Plan) {
+      return
+    }
+
+    this.gamePhase = GamePhase.Act
+
+    // TODO move phase after real act phase things are done
+    setTimeout(() => {
+      this.playerCharacters.move();
+      this.gamePhase = GamePhase.Plan
+    }, 500)
+  }
 }
