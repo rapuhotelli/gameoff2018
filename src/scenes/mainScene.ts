@@ -1,7 +1,7 @@
 import 'phaser'
 import LevelManager from '../objects/LevelManager'
 
-import { createDebugger, sceneBridge } from '../utils'
+import { sceneBridge } from '../utils'
 
 export class MainScene extends Phaser.Scene {
 
@@ -14,7 +14,6 @@ export class MainScene extends Phaser.Scene {
       key: 'MainScene',
       active: true,
     })
-    this.debugger = () => {console.warn('debugger unavailable'); return false}
     sceneBridge.connect(this, 'MainScene')
   }
 
@@ -24,10 +23,6 @@ export class MainScene extends Phaser.Scene {
     //this.load.image('levelGraphic', 'assets/map1-sketch.png')
 
     //Bard-M-01
-  }
-
-  public debug(text: string) {
-    this.debugger(text)
   }
 
   create(): void {
@@ -50,12 +45,11 @@ export class MainScene extends Phaser.Scene {
 
     // console.log(this.input.activePointer.positionToCamera(this.cameras.main))
 
-    this.debugger = createDebugger(true, this.add.text(50, 50, 'null'))
-
     const key = 'level0'
     const level = new LevelManager(key)
     this.scene.add(key, level, true)
-    this.scene.bringToTop('MainScene')
+    level.scene.moveBelow('HUD', key)
+    // this.scene.bringToTop('MainScene')
   }
 
   update(): void {

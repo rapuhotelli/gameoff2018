@@ -92,7 +92,7 @@ export default class LevelManager extends Phaser.Scene {
       // Clicks inside grid
 
       // this.scene.get('MainScene').debugger(`${sourceTileX} ${sourceTileY}`)
-      sceneBridge.get('MainScene').debugger(`${sourceTileX} ${sourceTileY}`)
+      sceneBridge.get('HUD').debugger(`${sourceTileX} ${sourceTileY}`)
       this.data.set('selectedTile', position)
 
       const characterInTile = this.playerCharacters.characters.find(character => character.getPosition().x === position.x && character.getPosition().y === position.y)
