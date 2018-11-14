@@ -1,4 +1,4 @@
-import { LEVEL_HEIGHT } from '../config'
+import { HEADER_FOOTER_HEIGHT, LEVEL_HEIGHT } from '../config'
 import * as levelData from '../levels/'
 import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 import { debounce } from '../utils'
@@ -59,22 +59,23 @@ export default class LevelManager extends Phaser.Scene {
   */
 
   preload() {
-    this.load.image('levelGraphic', 'assets/map1-sketch.png')
+    // this.load.image('levelGraphic', 'assets/map1-sketch.png')
     this.load.image('gridSquare', 'assets/grid-wide.png')
+    this.load.image('tileset', `assets/${this.levelData.tileSet}.png`)
     this.playerCharacters.preloadAll()
   }
 
   create() {
     // TODO
-    const levelGraphic = this.add.image(512, 384, 'levelGraphic')
+    // const levelGraphic = this.add.image(512, 384, 'levelGraphic')
     // levelGraphic.displayHeight = levelGraphic.height - levelGraphic.height/8 // 640
-    levelGraphic.displayHeight = LEVEL_HEIGHT
+    // levelGraphic.displayHeight = LEVEL_HEIGHT
 
     console.log(this.levelData)
 
     this.gridMap = this.make.tilemap({ data: this.levelData.tileData, tileWidth: 32, tileHeight: 28 })
-    const tiles = this.gridMap.addTilesetImage('gridSquare')
-    const layer = this.gridMap.createStaticLayer(0, tiles, 0, levelGraphic.height/8/2)
+    const tiles = this.gridMap.addTilesetImage('tileset')
+    const layer = this.gridMap.createStaticLayer(0, tiles, 0, HEADER_FOOTER_HEIGHT)
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
     this.gridCursor.strokeRect(0, 0, 32, 28)
