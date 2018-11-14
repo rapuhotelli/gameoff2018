@@ -21,6 +21,7 @@ export default class LevelManager extends Phaser.Scene {
   private playerCharacters: PCM
   private gamePhase: GamePhase
   private selectedPlayer: integer
+  private numberKeys: Array<Phaser.Input.Keyboard.Key>
 
   constructor(key: string) {
     super(key)
@@ -103,11 +104,23 @@ export default class LevelManager extends Phaser.Scene {
 
     this.playerCharacters.createAll(this.gridMap)
 
+    this.numberKeys = [
+      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE),
+      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO),
+      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE),
+      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
+    ]
   }
 
   update() {
     this.input.activePointer.positionToCamera(this.cameras.main, this.cursorPosition)
     const cursorTile = this.gridMap.getTileAtWorldXY(this.cursorPosition.x, this.cursorPosition.y)
+
+    this.numberKeys.forEach((key, index) => {
+      if (key.isDown) {
+        this.selectedPlayer = index
+      }
+    })
 
     if (this.input.manager.activePointer.isDown && cursorTile) {
       this.clickTile()
