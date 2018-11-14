@@ -114,7 +114,7 @@ export default class LevelManager extends Phaser.Scene {
     this.endTurnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
   }
 
-  update() {
+  update(time: number, delta: number) {
     this.input.activePointer.positionToCamera(this.cameras.main, this.cursorPosition)
     const cursorTile = this.gridMap.getTileAtWorldXY(this.cursorPosition.x, this.cursorPosition.y)
 
@@ -147,7 +147,7 @@ export default class LevelManager extends Phaser.Scene {
       this.gridCursor.setVisible(false)
     }
 
-    this.playerCharacters.updateAll()
+    this.playerCharacters.updateAll(time, delta)
 
   }
 

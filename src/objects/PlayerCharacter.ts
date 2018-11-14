@@ -7,7 +7,7 @@ export interface PCM {
   newCharacter: (options: Options) => void
   preloadAll: () => void
   createAll: (gridMap: Phaser.Tilemaps.Tilemap) => void
-  updateAll: () => void
+  updateAll: (time: number, delta: number) => void
   characters: Array<PlayerCharacter>
   move: () => void
 }
@@ -41,8 +41,8 @@ export function PCManager(scene: Phaser.Scene):PCM {
     characters.map((pc: PlayerCharacter) => pc.create(gridMap))
   }
 
-  function updateAll() {
-    characters.map((pc: PlayerCharacter) => pc.update())
+  function updateAll(time: number, delta: number) {
+    characters.map((pc: PlayerCharacter) => pc.update(time, delta))
   }
 
   function move() {
@@ -88,10 +88,14 @@ export class PlayerCharacter {
     this.characterSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
   }
 
-  update() {
+  update(time: number, delta: number) {
     // tee coordinate mapper homma
     const positionInWorld = getWorldCenterForTile(this.position)
     this.characterSprite.setPosition(positionInWorld.x, positionInWorld.y)
+
+    const walkingFrame = Math.floor(time / 150) % 4
+    const frame = walkingFrame === 3 ? 1 : walkingFrame
+    this.characterSprite.setFrame(12 + frame)
   }
 
   getPosition() {
