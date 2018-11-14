@@ -95,14 +95,13 @@ export class PlayerCharacter {
   }
 
   setDestination(position: GridPosition) {
-
+    if (this.gridMap) {
+      this.targetPosition = this.gridMap.getTileAt(position.x, position.y)
+    }
   }
 
   move() {
     this.position = this.targetPosition
-    if (this.gridMap) {
-      this.targetPosition = this.gridMap.getTileAt(this.targetPosition.x + 2, this.targetPosition.y)
-    }
   }
 
 

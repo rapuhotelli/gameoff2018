@@ -70,11 +70,14 @@ export default class LevelManager extends Phaser.Scene {
     this.clickTile = debounce(() => {
       const sourceTileX = this.gridMap.worldToTileX(this.cursorPosition.x)
       const sourceTileY = this.gridMap.worldToTileY(this.cursorPosition.y)
+      const position = {x: sourceTileX, y: sourceTileY}
       // Clicks inside grid
 
       // this.scene.get('MainScene').debugger(`${sourceTileX} ${sourceTileY}`)
       sceneBridge.get('MainScene').debugger(`${sourceTileX} ${sourceTileY}`)
-      this.data.set('selectedTile', {x: sourceTileX, y: sourceTileY})
+      this.data.set('selectedTile', position)
+
+      this.playerCharacters.characters[0].setDestination(position)
     })
 
     this.playerCharacters.createAll(this.gridMap)
