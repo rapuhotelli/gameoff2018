@@ -22,6 +22,7 @@ export default class LevelManager extends Phaser.Scene {
   private gamePhase: GamePhase
   private selectedPlayer: integer
   private numberKeys: Array<Phaser.Input.Keyboard.Key>
+  private endTurnKey: Phaser.Input.Keyboard.Key
 
   constructor(key: string) {
     super(key)
@@ -110,6 +111,7 @@ export default class LevelManager extends Phaser.Scene {
       this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE),
       this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
     ]
+    this.endTurnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
   }
 
   update() {
@@ -121,6 +123,10 @@ export default class LevelManager extends Phaser.Scene {
         this.selectedPlayer = index
       }
     })
+
+    if (this.endTurnKey.isDown) {
+      this.endTurn()
+    }
 
     if (this.input.manager.activePointer.isDown && cursorTile) {
       this.clickTile()
