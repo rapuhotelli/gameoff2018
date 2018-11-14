@@ -117,7 +117,7 @@ export default class LevelManager extends Phaser.Scene {
 
     // TODO move phase after real act phase things are done
     setTimeout(() => {
-      this.playerCharacters.move();
+      this.playerCharacters.move()
       this.gamePhase = GamePhase.Plan
     }, 500)
   }
