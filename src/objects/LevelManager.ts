@@ -20,6 +20,7 @@ export default class LevelManager extends Phaser.Scene {
   private cursorPosition: {x: number, y: number}
   private playerCharacters: PCM
   private gamePhase: GamePhase
+  private selectedPlayer: integer
 
   constructor(key: string) {
     super(key)
@@ -32,6 +33,18 @@ export default class LevelManager extends Phaser.Scene {
     this.playerCharacters.newCharacter( {
       spriteSheet: 'Bard-M-01',
       startingPosition: {x: 20, y: 16},
+    })
+    this.playerCharacters.newCharacter( {
+      spriteSheet: 'Bard-M-01',
+      startingPosition: {x: 21, y: 16},
+    })
+    this.playerCharacters.newCharacter( {
+      spriteSheet: 'Bard-M-01',
+      startingPosition: {x: 22, y: 16},
+    })
+    this.playerCharacters.newCharacter( {
+      spriteSheet: 'Bard-M-01',
+      startingPosition: {x: 23, y: 16},
     })
 
     this.gamePhase = GamePhase.Plan
@@ -67,6 +80,8 @@ export default class LevelManager extends Phaser.Scene {
     this.gridCursor.strokeRect(0, 0, 32, 28)
     this.gridCursor.setPosition(0, 0)
 
+    this.selectedPlayer = 0
+
     this.clickTile = debounce(() => {
       const sourceTileX = this.gridMap.worldToTileX(this.cursorPosition.x)
       const sourceTileY = this.gridMap.worldToTileY(this.cursorPosition.y)
@@ -77,7 +92,12 @@ export default class LevelManager extends Phaser.Scene {
       sceneBridge.get('MainScene').debugger(`${sourceTileX} ${sourceTileY}`)
       this.data.set('selectedTile', position)
 
-      this.playerCharacters.characters[0].setDestination(position)
+      const characterInTile = this.playerCharacters.characters.find(character => character.getPosition().x === position.x && character.getPosition().y === position.y)
+      if (characterInTile) {
+        this.selectedPlayer = this.playerCharacters.characters.indexOf(characterInTile)
+      } else {
+        this.playerCharacters.characters[this.selectedPlayer].setDestination(position)
+      }
     })
 
     this.playerCharacters.createAll(this.gridMap)

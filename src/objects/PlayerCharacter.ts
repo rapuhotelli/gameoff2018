@@ -82,7 +82,7 @@ export class PlayerCharacter {
   create(gridMap: Phaser.Tilemaps.Tilemap) {
     this.gridMap = gridMap
     this.position = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
-    this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x + 2, this.options.startingPosition.y)
+    this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
 
     const positionInWorld = getWorldCenterForTile(this.position)
     this.characterSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
@@ -92,6 +92,10 @@ export class PlayerCharacter {
     // tee coordinate mapper homma
     const positionInWorld = getWorldCenterForTile(this.position)
     this.characterSprite.setPosition(positionInWorld.x, positionInWorld.y)
+  }
+
+  getPosition() {
+    return this.position
   }
 
   setDestination(position: GridPosition) {
