@@ -15,8 +15,40 @@ export const tileData = [
   [0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 13
   [0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 14
   [0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 15
-  [0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0] // 16
+  [0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 16
   
 ]
 
 export const tileSet = 'tileset1'
+
+
+export const playerCharacters = [
+  {
+    name: 'durr',
+    speed: 3,
+    spriteSheet: 'Bard-M-01',
+    maxHealth: 100,
+    startingPosition: {x: 10, y: 6},
+  },
+  {
+    name: 'derp',
+    speed: 3,
+    spriteSheet: 'Bard-M-01',
+    maxHealth: 100,
+    startingPosition: {x: 11, y: 6},
+  },
+  {
+    name: 'Hurr!',
+    speed: 3,
+    spriteSheet: 'Bard-M-01',
+    maxHealth: 100,
+    startingPosition: {x: 12, y: 6},
+  },
+  {
+    name: 'Lohiposki',
+    speed: 3,
+    spriteSheet: 'Bard-M-01',
+    maxHealth: 100,
+    startingPosition: {x: 13, y: 6},
+  },
+]

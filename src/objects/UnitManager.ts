@@ -3,16 +3,16 @@
 import { getWorldCenterForTile } from '../utils'
 import LevelManager from './LevelManager'
 
-export interface PCM {
-  newCharacter: (options: Options) => void
+export interface IUnitMananager {
+  newUnit: (options: Options) => void
   preloadAll: () => void
   createAll: (gridMap: Phaser.Tilemaps.Tilemap) => void
   updateAll: (time: number, delta: number) => void
-  characters: Array<PlayerCharacter>
+  units: Array<Unit>
   move: () => void
 }
 
-interface GridPosition {
+export interface GridPosition {
   x: number,
   y: number,
 }
@@ -24,42 +24,42 @@ interface Options {
 }
 
 
-export function PCManager(scene: Phaser.Scene):PCM {
+export function UnitManager(scene: Phaser.Scene):IUnitMananager {
   let characterIndex = 0
-  const characters: Array<PlayerCharacter> = []
+  const units: Array<Unit> = []
 
   // ToDo add better options
-  function newCharacter(options: Options) {
-    characters[characterIndex] = new PlayerCharacter(scene, characterIndex++, options)
+  function newUnit(options: Options) {
+    units[characterIndex] = new Unit(scene, characterIndex++, options)
   }
 
   function preloadAll() {
-    characters.map((pc: PlayerCharacter) => pc.preload())
+    units.map((pc: Unit) => pc.preload())
   }
 
   function createAll(gridMap: Phaser.Tilemaps.Tilemap) {
-    characters.map((pc: PlayerCharacter) => pc.create(gridMap))
+    units.map((pc: Unit) => pc.create(gridMap))
   }
 
   function updateAll(time: number, delta: number) {
-    characters.map((pc: PlayerCharacter) => pc.update(time, delta))
+    units.map((pc: Unit) => pc.update(time, delta))
   }
 
   function move() {
-    characters.map((pc: PlayerCharacter) => pc.move())
+    units.map((pc: Unit) => pc.move())
   }
 
   return {
-    newCharacter,
+    newUnit,
     preloadAll,
     createAll,
     updateAll,
-    characters,
+    units,
     move,
   }
 }
 
-export class PlayerCharacter {
+export class Unit {
   private scene: Phaser.Scene
   private readonly sheet: string
   private readonly key: string
@@ -67,7 +67,7 @@ export class PlayerCharacter {
   private gridMap: Phaser.Tilemaps.Tilemap | null // reference to scene grid map (todo make own layer?)
   private targetPosition: Phaser.Tilemaps.Tile // position to end up at after movement
   private position: Phaser.Tilemaps.Tile // current game state position
-  private characterSprite: Phaser.GameObjects.Sprite
+  private unitSprite: Phaser.GameObjects.Sprite
 
   constructor(scene: Phaser.Scene, characterIndex: number, options: Options) {
     this.scene = scene
@@ -85,17 +85,16 @@ export class PlayerCharacter {
     this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
 
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.characterSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
+    this.unitSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
   }
 
   update(time: number, delta: number) {
-    // tee coordinate mapper homma
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.characterSprite.setPosition(positionInWorld.x, positionInWorld.y)
+    this.unitSprite.setPosition(positionInWorld.x, positionInWorld.y)
 
     const walkingFrame = Math.floor(time / 150) % 4
     const frame = walkingFrame === 3 ? 1 : walkingFrame
-    this.characterSprite.setFrame(12 + frame)
+    this.unitSprite.setFrame(12 + frame)
   }
 
   getPosition() {

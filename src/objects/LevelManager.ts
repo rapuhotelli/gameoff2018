@@ -1,8 +1,8 @@
 import { CELL_HEIGHT, CELL_WIDTH, GRID_HEIGHT, GRID_WIDTH, HEADER_FOOTER_HEIGHT, LEVEL_HEIGHT } from '../config'
 import * as levelData from '../levels/'
-import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 import { debounce } from '../utils'
 import { sceneBridge } from '../utils'
+import { IUnitMananager, UnitManager } from './UnitManager'
 
 enum GamePhase {
   // Init phase?
@@ -18,7 +18,7 @@ export default class LevelManager extends Phaser.Scene {
   private gridCursor: Phaser.GameObjects.Graphics
   private clickTile: () => void
   private cursorPosition: {x: number, y: number}
-  private playerCharacters: PCM
+  private playerCharacters: IUnitMananager
   private gamePhase: GamePhase
   private selectedPlayer: integer
   private numberKeys: Array<Phaser.Input.Keyboard.Key>
@@ -31,35 +31,15 @@ export default class LevelManager extends Phaser.Scene {
     this.cursorPosition = {x: 0, y: 0}
 
     // level specific ?
-    this.playerCharacters = PCManager(this)
-    this.playerCharacters.newCharacter( {
-      spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 10, y: 6},
+    this.playerCharacters = UnitManager(this)
+    this.levelData.playerCharacters.forEach(pc => {
+      this.playerCharacters.newUnit(pc)  
     })
-    this.playerCharacters.newCharacter( {
-      spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 11, y: 6},
-    })
-    this.playerCharacters.newCharacter( {
-      spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 12, y: 6},
-    })
-    this.playerCharacters.newCharacter( {
-      spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 13, y: 6},
-    })
-
+    
     this.gamePhase = GamePhase.Plan
-
     sceneBridge.connect(this, 'LevelManager')
   }
-
-  /*
-  getLevelData() {
-    return (<any>levelData)[this.key]
-  }
-  */
-
+ 
   preload() {
     // this.load.image('levelGraphic', 'assets/map1-sketch.png')
     this.load.image('gridSquare', 'assets/grid-wide.png')
@@ -95,11 +75,11 @@ export default class LevelManager extends Phaser.Scene {
       sceneBridge.get('HUD').debugger(`${sourceTileX} ${sourceTileY}`)
       this.data.set('selectedTile', position)
 
-      const characterInTile = this.playerCharacters.characters.find(character => character.getPosition().x === position.x && character.getPosition().y === position.y)
+      const characterInTile = this.playerCharacters.units.find(character => character.getPosition().x === position.x && character.getPosition().y === position.y)
       if (characterInTile) {
-        this.selectedPlayer = this.playerCharacters.characters.indexOf(characterInTile)
+        this.selectedPlayer = this.playerCharacters.units.indexOf(characterInTile)
       } else {
-        this.playerCharacters.characters[this.selectedPlayer].setDestination(position)
+        this.playerCharacters.units[this.selectedPlayer].setDestination(position)
       }
     })
 
