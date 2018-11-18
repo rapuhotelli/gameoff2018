@@ -1,5 +1,13 @@
 import * as Easystar from 'easystarjs'
-import { CELL_HEIGHT, CELL_WIDTH, GRID_HEIGHT, GRID_WIDTH, HEADER_FOOTER_HEIGHT, LEVEL_HEIGHT } from '../config'
+import {
+  CELL_HEIGHT,
+  CELL_WIDTH,
+  GAME_WIDTH,
+  GRID_HEIGHT,
+  GRID_WIDTH,
+  HEADER_FOOTER_HEIGHT,
+  LEVEL_HEIGHT,
+} from '../config'
 import * as levelData from '../levels/'
 import { debounce } from '../utils'
 import { sceneBridge } from '../utils'
@@ -47,6 +55,7 @@ export default class LevelManager extends Phaser.Scene {
     sceneBridge.connect(this, 'LevelManager')
     
     this.easystar = new Easystar.js()
+    this.pathIndicators = []
   }
  
   preload() {
@@ -68,6 +77,11 @@ export default class LevelManager extends Phaser.Scene {
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
     this.gridCursor.strokeRect(0, 0, CELL_WIDTH, CELL_HEIGHT)
     this.gridCursor.setPosition(0, 0)
+    
+    const grid = this.add.grid(0, HEADER_FOOTER_HEIGHT, GAME_WIDTH, LEVEL_HEIGHT, CELL_WIDTH, CELL_HEIGHT, 0x000000, 0, 0x333333, 0.3)
+    grid.setOrigin(0, 0)
+    
+      
     
     this.selectedTileIndicator = this.add.rectangle(0, 0, CELL_WIDTH, CELL_HEIGHT, 0x22ff00, 0.1)
 
@@ -128,18 +142,23 @@ export default class LevelManager extends Phaser.Scene {
     if (this.cursorHoverTile !== cursorTile) {
       this.cursorHoverTile = cursorTile
       console.log('tile changed')
-      /*
-      this.pathIndicators.map(pi => {
-        pi.destroy()
-      })
-      */
+      this.pathIndicators.map(pi => pi.destroy())
+      this.pathIndicators = []
+      
       if (cursorTile) {
         const charpos = this.playerCharacters.units[this.selectedPlayer].getPosition()
         this.easystar.findPath(charpos.x, charpos.y, cursorTile.x, cursorTile.y, (path) => {
           this.calculatedPath = path
+          if (path) {
+            path.shift()
+            this.pathIndicators = path.map(p => {
+              const tile = this.gridMap.getTileAt(p.x, p.y)
+              return this.add.rectangle(tile.getCenterX(), tile.getCenterY(), CELL_WIDTH, CELL_HEIGHT, 0x22ff00, 0.3)
+            })
+          }
         })
         this.easystar.calculate()
-        console.log(this.calculatedPath)
+        
       }
     }
   }
