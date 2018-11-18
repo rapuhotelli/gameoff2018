@@ -1,9 +1,9 @@
-import { GRID_HEIGHT, GRID_WIDTH } from './config'
+import { CELL_HEIGHT, CELL_WIDTH, GRID_HEIGHT, GRID_WIDTH } from './config'
 
 export const getWorldCenterForTile = (tile: Phaser.Tilemaps.Tile) => {
   return {
-    x: tile.getLeft() + GRID_WIDTH / 2,
-    y: tile.getTop() + GRID_HEIGHT / 2,
+    x: tile.getLeft() + CELL_WIDTH / 2,
+    y: tile.getTop() + CELL_HEIGHT / 2,
   }
 }
 
