@@ -1,8 +1,12 @@
 import 'phaser'
 // main game configuration
-import { GAME_HEIGHT, GAME_WIDTH } from './config'
+import { CELL_HEIGHT, CELL_WIDTH, GAME_HEIGHT, GAME_WIDTH, GRID_HEIGHT, GRID_WIDTH } from './config'
 import { HUD } from './scenes/HUD'
 import { MainScene } from './scenes/mainScene'
+
+console.log('GAME SIZE', GAME_WIDTH, GAME_HEIGHT)
+console.log('GRID SIZE', GRID_WIDTH, GRID_HEIGHT)
+console.log('CELL SIZE', CELL_WIDTH, CELL_HEIGHT)
 
 const config: GameConfig = {
   width: GAME_WIDTH,
@@ -11,7 +15,9 @@ const config: GameConfig = {
   parent: 'game',
   scene: [MainScene, HUD],
   // @ts-ignore
-  // pixelArt: true,
+  zoom: 2,
+  // @ts-ignore
+  pixelArt: true,
   // @ts-ignore
   audio: {
     disableWebAudio: true,
@@ -46,6 +52,10 @@ function resize(game) {
 */
 window.onload = () => {
   const game = new Game(config)
+  // @ts-ignore
+  game.canvas.style.width = (game.config.width * game.config.zoom).toString() + 'px'
+  // @ts-ignore
+  game.canvas.style.height = (game.config.height * game.config.zoom).toString() + 'px'
   // resize(game)
 }
 // */

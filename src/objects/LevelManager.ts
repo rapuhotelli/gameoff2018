@@ -1,4 +1,4 @@
-import { HEADER_FOOTER_HEIGHT, LEVEL_HEIGHT } from '../config'
+import { CELL_HEIGHT, CELL_WIDTH, GRID_HEIGHT, GRID_WIDTH, HEADER_FOOTER_HEIGHT, LEVEL_HEIGHT } from '../config'
 import * as levelData from '../levels/'
 import { PCM, PCManager, PlayerCharacter } from '../objects/PlayerCharacter'
 import { debounce } from '../utils'
@@ -34,19 +34,19 @@ export default class LevelManager extends Phaser.Scene {
     this.playerCharacters = PCManager(this)
     this.playerCharacters.newCharacter( {
       spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 20, y: 16},
+      startingPosition: {x: 10, y: 6},
     })
     this.playerCharacters.newCharacter( {
       spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 21, y: 16},
+      startingPosition: {x: 11, y: 6},
     })
     this.playerCharacters.newCharacter( {
       spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 22, y: 16},
+      startingPosition: {x: 12, y: 6},
     })
     this.playerCharacters.newCharacter( {
       spriteSheet: 'Bard-M-01',
-      startingPosition: {x: 23, y: 16},
+      startingPosition: {x: 13, y: 6},
     })
 
     this.gamePhase = GamePhase.Plan
@@ -75,12 +75,12 @@ export default class LevelManager extends Phaser.Scene {
 
     console.log(this.levelData)
 
-    this.gridMap = this.make.tilemap({ data: this.levelData.tileData, tileWidth: 32, tileHeight: 28 })
-    const tiles = this.gridMap.addTilesetImage('tileset')
+    this.gridMap = this.make.tilemap({ data: this.levelData.tileData, tileWidth: CELL_WIDTH, tileHeight: CELL_HEIGHT})
+    const tiles = this.gridMap.addTilesetImage('tileset', undefined, 32, 28)
     const layer = this.gridMap.createStaticLayer(0, tiles, 0, HEADER_FOOTER_HEIGHT)
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
-    this.gridCursor.strokeRect(0, 0, 32, 28)
+    this.gridCursor.strokeRect(0, 0, CELL_WIDTH, CELL_HEIGHT)
     this.gridCursor.setPosition(0, 0)
 
     this.selectedPlayer = 0

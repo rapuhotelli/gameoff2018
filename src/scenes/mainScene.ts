@@ -26,25 +26,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   create(): void {
-
-    const GRID_WIDTH = 32
-    const GRID_HEIGHT = 24 // 24
-
-    /*
-    const gridTileMap = []
-    for (let y = 0; y < GRID_HEIGHT; y++) {
-      gridTileMap[y] = Array(GRID_WIDTH).fill(0)
-    }
-    */
-
-    // const gridTileMap = GameState.createGridTileMap()
-
-
-    // this.scene.get('HUD')
-
-
-    // console.log(this.input.activePointer.positionToCamera(this.cameras.main))
-
+    
     const key = 'level0'
     const level = new LevelManager(key)
     this.scene.add(key, level, true)
@@ -58,8 +40,3 @@ export class MainScene extends Phaser.Scene {
 
   }
 }
-
-/*
-const MainScene = createScene(MainSceneClass)
-export { MainScene }
-*/
