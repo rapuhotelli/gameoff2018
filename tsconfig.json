@@ -1,7 +1,8 @@
 {
   "exclude": [
     "node_modules",
-    "types"
+    "types",
+    "design"
   ],
   "compilerOptions": {
     /* Basic Options */

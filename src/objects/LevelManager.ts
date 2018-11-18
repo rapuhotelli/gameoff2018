@@ -76,7 +76,7 @@ export default class LevelManager extends Phaser.Scene {
     console.log(this.levelData)
 
     this.gridMap = this.make.tilemap({ data: this.levelData.tileData, tileWidth: CELL_WIDTH, tileHeight: CELL_HEIGHT})
-    const tiles = this.gridMap.addTilesetImage('tileset', undefined, 32, 28)
+    const tiles = this.gridMap.addTilesetImage('tileset', undefined, 32, 24)
     const layer = this.gridMap.createStaticLayer(0, tiles, 0, HEADER_FOOTER_HEIGHT)
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })

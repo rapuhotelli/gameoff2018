@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "expose-loader": "^0.7.5",
+    "lodash": "^4.17.11",
     "raw-loader": "^0.5.1",
     "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",
