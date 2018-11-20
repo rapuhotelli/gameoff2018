@@ -34,7 +34,7 @@ export default class LevelManager extends Phaser.Scene {
   private endTurnKey: Phaser.Input.Keyboard.Key
   
   private cursorHoverTile: Phaser.Tilemaps.Tile
-  private selectedTileIndicator: Phaser.GameObjects.Rectangle
+  private selectedTileIndicator: Phaser.GameObjects.Rectangle | null
   private easystar: Easystar.js
   private pathIndicators: Phaser.GameObjects.Rectangle[]
   private calculatedPath: Array<GridPosition>
@@ -80,10 +80,7 @@ export default class LevelManager extends Phaser.Scene {
     
     const grid = this.add.grid(0, HEADER_FOOTER_HEIGHT, GAME_WIDTH, LEVEL_HEIGHT, CELL_WIDTH, CELL_HEIGHT, 0x000000, 0, 0x333333, 0.3)
     grid.setOrigin(0, 0)
-    
-      
-    
-    this.selectedTileIndicator = this.add.rectangle(0, 0, CELL_WIDTH, CELL_HEIGHT, 0x22ff00, 0.1)
+
 
     this.selectedPlayer = 0
 
@@ -95,24 +92,31 @@ export default class LevelManager extends Phaser.Scene {
       const position = {x: sourceTileX, y: sourceTileY}
       // Clicks inside grid
 
-      // this.scene.get('MainScene').debugger(`${sourceTileX} ${sourceTileY}`)
       sceneBridge.get('HUD').debugger(`${sourceTileX} ${sourceTileY}`)
       this.data.set('selectedTile', position)
 
-      const characterInTile = this.playerCharacters.units.find(character => character.getPosition().x === position.x && character.getPosition().y === position.y)
+      if (this.selectedTileIndicator) {
+        this.selectedTileIndicator.destroy()
+        this.selectedTileIndicator = null
+      }
+
+      const characterInTile = this.playerCharacters.units.find(character => {
+        return character.getPosition().x === position.x && character.getPosition().y === position.y
+      })
+
       if (characterInTile) {
         this.selectedPlayer = this.playerCharacters.units.indexOf(characterInTile)
       } else {
-        this.selectedTileIndicator.setPosition(clickedTile.getCenterX(), clickedTile.getCenterY())
+        this.selectedTileIndicator = this.add.rectangle(
+          clickedTile.getCenterX(),
+          clickedTile.getCenterY(),
+          CELL_WIDTH, CELL_HEIGHT,
+          0x22ff00,
+          0.6,
+        )
         this.selectedTileIndicator.setFillStyle(0x22ff00, 0.6)
-        
-        /*
-        this.easystar.findPath(0, 0, sourceTileX, sourceTileY, (path) => {
-          console.log(path)
-        })
-        this.easystar.calculate()
-        */
-        this.playerCharacters.units[this.selectedPlayer].setDestination(position)
+
+        this.playerCharacters.units[this.selectedPlayer].setDestination(position, this.calculatedPath)
       }
     })
 
@@ -142,8 +146,10 @@ export default class LevelManager extends Phaser.Scene {
     if (this.cursorHoverTile !== cursorTile) {
       this.cursorHoverTile = cursorTile
       console.log('tile changed')
+
       this.pathIndicators.map(pi => pi.destroy())
       this.pathIndicators = []
+
       
       if (cursorTile) {
         const charpos = this.playerCharacters.units[this.selectedPlayer].getPosition()
@@ -158,7 +164,6 @@ export default class LevelManager extends Phaser.Scene {
           }
         })
         this.easystar.calculate()
-        
       }
     }
   }

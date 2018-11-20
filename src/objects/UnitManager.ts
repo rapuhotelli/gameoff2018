@@ -1,7 +1,7 @@
 
 // ToDo: add character layer
+import { CELL_HEIGHT, CELL_WIDTH } from '../config'
 import { getWorldCenterForTile } from '../utils'
-import LevelManager from './LevelManager'
 
 export interface IUnitMananager {
   newUnit: (options: Options) => void
@@ -64,15 +64,20 @@ export class Unit {
   private readonly sheet: string
   private readonly key: string
   private options: Options
-  private gridMap: Phaser.Tilemaps.Tilemap | null // reference to scene grid map (todo make own layer?)
+  private gridMap: Phaser.Tilemaps.Tilemap // reference to scene grid map (todo make own layer?)
   private targetPosition: Phaser.Tilemaps.Tile // position to end up at after movement
   private position: Phaser.Tilemaps.Tile // current game state position
   private unitSprite: Phaser.GameObjects.Sprite
+  private selectionCircle: Phaser.GameObjects.Graphics | null
+
+  private calculatedPath: Array<GridPosition>
+  private pathIndicators: Phaser.GameObjects.Rectangle[]
 
   constructor(scene: Phaser.Scene, characterIndex: number, options: Options) {
     this.scene = scene
     this.key = `pc${characterIndex}`
     this.options = options
+    this.pathIndicators = []
   }
 
   preload() {
@@ -85,26 +90,43 @@ export class Unit {
     this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
 
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.unitSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y, this.key)
+    tee: grouppi hahmovalinnalle ja spritelle
+    this.character = this.scene.add.group({ key: 'invader', frame: 0, repeat: 53 });
+    this.unitSprite = this.scene.add.sprite(positionInWorld.x, positionInWorld.y-CELL_HEIGHT/2, this.key)
+    .setDepth(1)
+
+    this.scene.add.graphics({ lineStyle: { width: 1, color: 0x22ff00, alpha: 1 } })
+    .strokeEllipse(positionInWorld.x, positionInWorld.y, CELL_WIDTH, CELL_HEIGHT , 16)
+    .setDepth(0)
   }
 
   update(time: number, delta: number) {
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.unitSprite.setPosition(positionInWorld.x, positionInWorld.y)
+    this.unitSprite.setPosition(positionInWorld.x, positionInWorld.y-CELL_HEIGHT/2)
 
     const walkingFrame = Math.floor(time / 150) % 4
     const frame = walkingFrame === 3 ? 1 : walkingFrame
     this.unitSprite.setFrame(12 + frame)
   }
 
+
   getPosition() {
     return this.position
   }
 
-  setDestination(position: GridPosition) {
+  setDestination(position: GridPosition, calculatedPath: Array<GridPosition>) {
     if (this.gridMap) {
       this.targetPosition = this.gridMap.getTileAt(position.x, position.y)
     }
+    if (!calculatedPath) {
+      return
+    }
+    this.pathIndicators.map(pi => pi.destroy())
+    this.pathIndicators = []
+    this.pathIndicators = calculatedPath.map(p => {
+      const tile = this.gridMap.getTileAt(p.x, p.y)
+      return this.scene.add.rectangle(tile.getCenterX(), tile.getCenterY(), CELL_WIDTH, CELL_HEIGHT, 0x2222ee, 0.3)
+    })
   }
 
   move() {
