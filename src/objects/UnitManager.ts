@@ -29,11 +29,13 @@ export class UnitManager {
   private characterIndex: number
   public units: Array<Unit>
   private scene: Phaser.Scene
+  private isMoving: boolean
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
     this.characterIndex = 0
     this.units = []
+    this.isMoving = false
   }
 
   // ToDo add better options
@@ -69,6 +71,16 @@ export class UnitManager {
       // unit.getPosition().x === position.x && unit.getPosition().y === position.y
     })
     selectUnit.setSelected(true)
+  }
+
+  getRoundMoveCount() {
+    let moves = 0
+    this.units.forEach((unit: Unit) => {
+      if (unit.calculatedPath.length > moves) {
+        moves = unit.calculatedPath.length
+      }
+    })
+    return moves
   }
 }
 

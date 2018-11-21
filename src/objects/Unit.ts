@@ -16,15 +16,17 @@ export class Unit {
   private unitContainer: Phaser.GameObjects.Container
   private isSelected: boolean
 
-  private calculatedPath: Array<GridPosition>
+  public calculatedPath: Array<GridPosition>
   private pathIndicators: Phaser.GameObjects.Rectangle[]
+  private isMoving: boolean
 
   constructor(scene: Phaser.Scene, characterIndex: number, options: IUnitOptions) {
     this.scene = scene
     this.key = `pc${characterIndex}`
     this.options = options
-    this.pathIndicators = []
     this.selectionCircle = null
+    this.calculatedPath = []
+    this.pathIndicators = []
   }
 
   preload() {
@@ -37,8 +39,6 @@ export class Unit {
     this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
 
     const positionInWorld = getWorldCenterForTile(this.position)
-    // tee: grouppi hahmovalinnalle ja spritelle
-    // this.character = this.scene.add.group({ key: 'invader', frame: 0, repeat: 53 });
     this.unitSprite = this.scene.add.sprite(0, -CELL_HEIGHT/2, this.key).setDepth(1)
 
     this.unitContainer = this.scene.add.container(positionInWorld.x, positionInWorld.y)
@@ -80,16 +80,37 @@ export class Unit {
     if (!calculatedPath) {
       return
     }
+    this.calculatedPath = calculatedPath
+    console.log(this.calculatedPath)
     this.pathIndicators.map(pi => pi.destroy())
     this.pathIndicators = []
-    this.pathIndicators = calculatedPath.map(p => {
+    this.pathIndicators = this.calculatedPath.map(p => {
       const tile = this.gridMap.getTileAt(p.x, p.y)
       return this.scene.add.rectangle(tile.getCenterX(), tile.getCenterY(), CELL_WIDTH, CELL_HEIGHT, 0x2222ee, 0.3)
     })
   }
 
   move() {
-    this.position = this.targetPosition
+    if (this.calculatedPath.length === 0) return
+    // this.position = this.targetPosition
+    const worldPosition = getWorldCenterForTile(this.position)
+    const targetPosition = getWorldCenterForTile(this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y))
+    var tween = this.scene.tweens.add({
+      targets: this.unitSprite,
+      x: targetPosition.x - worldPosition.x,
+      y: targetPosition.y - worldPosition.y,
+      ease: 'linear',
+      duration: 2000,
+      onStart: function () { console.log('onStart'); console.log(arguments) },
+      onComplete: () => {
+        console.log('onComplete')
+        console.log(arguments)
+        this.position = this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y)
+        this.calculatedPath.shift()
+        this.unitSprite.setPosition(0, -CELL_HEIGHT/2)
+        this.unitContainer.setPosition(targetPosition.x, targetPosition.y)
+      },
+    })
   }
 
 

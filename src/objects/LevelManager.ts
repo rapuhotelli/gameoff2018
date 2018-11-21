@@ -36,6 +36,8 @@ export default class LevelManager extends Phaser.Scene {
   private easystar: Easystar.js
   private pathIndicators: Phaser.GameObjects.Rectangle[]
   private calculatedPath: Array<GridPosition>
+
+  private currentRound = 0
   
   constructor(key: string) {
     super(key)
@@ -54,6 +56,7 @@ export default class LevelManager extends Phaser.Scene {
     
     this.easystar = new Easystar.js()
     this.pathIndicators = []
+    this.currentRound = 0
   }
  
   preload() {
@@ -96,12 +99,6 @@ export default class LevelManager extends Phaser.Scene {
         this.selectedTileIndicator.destroy()
         this.selectedTileIndicator = null
       }
-
-      /*
-      const characterInTile = this.unitManager.units.find(character => {
-        return character.getPosition().x === position.x && character.getPosition().y === position.y
-      })
-      */
 
       const unitInTile = this.unitManager.getUnitAt(position)
 
@@ -197,7 +194,6 @@ export default class LevelManager extends Phaser.Scene {
     }
 
     this.unitManager.updateAll(time, delta)
-
   }
 
   endTurn() {
@@ -207,10 +203,16 @@ export default class LevelManager extends Phaser.Scene {
 
     this.gamePhase = GamePhase.Act
 
+    const moves = this.unitManager.getRoundMoveCount()
+    sceneBridge.get('HUD').debugger(`Moves: ${moves}`)
+    this.unitManager.move()
+
     // TODO move phase after real act phase things are done
+
     setTimeout(() => {
-      this.unitManager.move()
+      // this.unitManager.step()
       this.gamePhase = GamePhase.Plan
     }, 500)
+
   }
 }
