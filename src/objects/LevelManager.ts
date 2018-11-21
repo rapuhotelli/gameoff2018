@@ -3,15 +3,13 @@ import {
   CELL_HEIGHT,
   CELL_WIDTH,
   GAME_WIDTH,
-  GRID_HEIGHT,
-  GRID_WIDTH,
   HEADER_FOOTER_HEIGHT,
   LEVEL_HEIGHT,
 } from '../config'
 import * as levelData from '../levels/'
 import { debounce } from '../utils'
 import { sceneBridge } from '../utils'
-import { GridPosition, IUnitMananager, UnitManager } from './UnitManager'
+import { GridPosition, UnitManager } from './UnitManager'
 
 enum GamePhase {
   // Init phase?
@@ -21,13 +19,13 @@ enum GamePhase {
 
 export default class LevelManager extends Phaser.Scene {
 
-  private key: string
+  private readonly key: string
   private gridMap: Phaser.Tilemaps.Tilemap
   private levelData: levelData.ILevel
   private gridCursor: Phaser.GameObjects.Graphics
   private clickTile: () => void
-  private cursorPosition: {x: number, y: number}
-  private playerCharacters: IUnitMananager
+  private readonly cursorPosition: {x: number, y: number}
+  private unitManager: UnitManager
   private gamePhase: GamePhase
   private selectedPlayer: integer
   private numberKeys: Array<Phaser.Input.Keyboard.Key>
@@ -45,10 +43,10 @@ export default class LevelManager extends Phaser.Scene {
     this.levelData = (<any>levelData)[this.key]
     this.cursorPosition = {x: 0, y: 0}
 
-    // level specific ?
-    this.playerCharacters = UnitManager(this)
+    this.unitManager = new UnitManager(this)
+
     this.levelData.playerCharacters.forEach(pc => {
-      this.playerCharacters.newUnit(pc)  
+      this.unitManager.newUnit(pc)
     })
     
     this.gamePhase = GamePhase.Plan
@@ -61,7 +59,7 @@ export default class LevelManager extends Phaser.Scene {
   preload() {
     this.load.image('gridSquare', 'assets/grid-wide.png')
     this.load.image('tileset', `assets/${this.levelData.tileSet}.png`)
-    this.playerCharacters.preloadAll()
+    this.unitManager.preloadAll()
   }
 
   create() {
@@ -90,7 +88,6 @@ export default class LevelManager extends Phaser.Scene {
       const clickedTile = this.gridMap.getTileAt(sourceTileX, sourceTileY)
 
       const position = {x: sourceTileX, y: sourceTileY}
-      // Clicks inside grid
 
       sceneBridge.get('HUD').debugger(`${sourceTileX} ${sourceTileY}`)
       this.data.set('selectedTile', position)
@@ -100,12 +97,18 @@ export default class LevelManager extends Phaser.Scene {
         this.selectedTileIndicator = null
       }
 
-      const characterInTile = this.playerCharacters.units.find(character => {
+      /*
+      const characterInTile = this.unitManager.units.find(character => {
         return character.getPosition().x === position.x && character.getPosition().y === position.y
       })
+      */
 
-      if (characterInTile) {
-        this.selectedPlayer = this.playerCharacters.units.indexOf(characterInTile)
+      const unitInTile = this.unitManager.getUnitAt(position)
+
+      if (unitInTile) {
+        this.selectedPlayer = this.unitManager.units.indexOf(unitInTile)
+        this.unitManager.setSelectedUnit(unitInTile)
+        // add
       } else {
         this.selectedTileIndicator = this.add.rectangle(
           clickedTile.getCenterX(),
@@ -116,11 +119,11 @@ export default class LevelManager extends Phaser.Scene {
         )
         this.selectedTileIndicator.setFillStyle(0x22ff00, 0.6)
 
-        this.playerCharacters.units[this.selectedPlayer].setDestination(position, this.calculatedPath)
+        this.unitManager.units[this.selectedPlayer].setDestination(position, this.calculatedPath)
       }
     })
 
-    this.playerCharacters.createAll(this.gridMap)
+    this.unitManager.createAll(this.gridMap)
 
     this.numberKeys = [
       this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE),
@@ -152,7 +155,7 @@ export default class LevelManager extends Phaser.Scene {
 
       
       if (cursorTile) {
-        const charpos = this.playerCharacters.units[this.selectedPlayer].getPosition()
+        const charpos = this.unitManager.units[this.selectedPlayer].getPosition()
         this.easystar.findPath(charpos.x, charpos.y, cursorTile.x, cursorTile.y, (path) => {
           this.calculatedPath = path
           if (path) {
@@ -176,7 +179,7 @@ export default class LevelManager extends Phaser.Scene {
     
     this.numberKeys.forEach((key, index) => {
       if (key.isDown) {
-        this.selectedPlayer = index
+        // this.selectedPlayer = index // restore this later
       }
     })
 
@@ -193,7 +196,7 @@ export default class LevelManager extends Phaser.Scene {
       this.gridCursor.setVisible(false)
     }
 
-    this.playerCharacters.updateAll(time, delta)
+    this.unitManager.updateAll(time, delta)
 
   }
 
@@ -206,7 +209,7 @@ export default class LevelManager extends Phaser.Scene {
 
     // TODO move phase after real act phase things are done
     setTimeout(() => {
-      this.playerCharacters.move()
+      this.unitManager.move()
       this.gamePhase = GamePhase.Plan
     }, 500)
   }

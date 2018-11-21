@@ -21,9 +21,14 @@ export const tileData = [
 
 export const tileSet = 'tileset1'
 
+enum AI {
+  Player,
+  Idiot,
+}
 
 export const playerCharacters = [
   {
+    ai: AI.Player,
     name: 'durr',
     speed: 3,
     spriteSheet: 'Bard-M-01',
@@ -31,6 +36,7 @@ export const playerCharacters = [
     startingPosition: {x: 10, y: 6},
   },
   {
+    ai: AI.Player,
     name: 'derp',
     speed: 3,
     spriteSheet: 'Bard-M-01',
@@ -38,6 +44,7 @@ export const playerCharacters = [
     startingPosition: {x: 11, y: 6},
   },
   {
+    ai: AI.Player,
     name: 'Hurr!',
     speed: 3,
     spriteSheet: 'Bard-M-01',
@@ -45,6 +52,7 @@ export const playerCharacters = [
     startingPosition: {x: 12, y: 6},
   },
   {
+    ai: AI.Player,
     name: 'Lohiposki',
     speed: 3,
     spriteSheet: 'Bard-M-01',
