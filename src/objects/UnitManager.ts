@@ -1,9 +1,6 @@
 
 // ToDo: add character layer
-import { CELL_HEIGHT, CELL_WIDTH } from '../config'
-import { getWorldCenterForTile } from '../utils'
 import { Unit } from './Unit'
-import Grid = Phaser.GameObjects.Grid
 
 export interface IUnitManager {
   newUnit: (options: IUnitOptions) => void
@@ -56,7 +53,7 @@ export class UnitManager {
   }
 
   move() {
-    this.units.map((unit: Unit) => unit.move())
+    this.units.map((unit: Unit) => unit.move(() => {}))
   }
 
   getUnitAt(position: GridPosition) {
@@ -68,7 +65,6 @@ export class UnitManager {
   setSelectedUnit(selectUnit: Unit) {
     this.units.map((unit: Unit) => {
       unit.setSelected(false)
-      // unit.getPosition().x === position.x && unit.getPosition().y === position.y
     })
     selectUnit.setSelected(true)
   }

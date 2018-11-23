@@ -9,6 +9,7 @@ import {
 import * as levelData from '../levels/'
 import { debounce } from '../utils'
 import { sceneBridge } from '../utils'
+import { ActionPhase } from './ActionPhase'
 import { GridPosition, UnitManager } from './UnitManager'
 
 enum GamePhase {
@@ -204,8 +205,15 @@ export default class LevelManager extends Phaser.Scene {
     this.gamePhase = GamePhase.Act
 
     const moves = this.unitManager.getRoundMoveCount()
+    sceneBridge.get('HUD').debugger(`Starting ActionPhase`)
     sceneBridge.get('HUD').debugger(`Moves: ${moves}`)
-    this.unitManager.move()
+
+    const onComplete = () => {
+      this.gamePhase = GamePhase.Plan
+      // re-enable all selections, re-draw grid etc etc
+    }
+    // Go!
+    const phase = new ActionPhase(moves, this.unitManager, onComplete)
 
     // TODO move phase after real act phase things are done
 

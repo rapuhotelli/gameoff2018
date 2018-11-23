@@ -1,5 +1,5 @@
-import { CELL_HEIGHT, CELL_WIDTH } from '../config'
-import { getWorldCenterForTile } from '../utils'
+import { CELL_HEIGHT, CELL_MOVEMENT_DURATION, CELL_WIDTH } from '../config'
+import { getSpriteCenterForTile, getWorldCenterForTile } from '../utils'
 import { GridPosition, IUnitOptions } from './UnitManager'
 
 export class Unit {
@@ -39,7 +39,8 @@ export class Unit {
     this.targetPosition = gridMap.getTileAt(this.options.startingPosition.x, this.options.startingPosition.y)
 
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.unitSprite = this.scene.add.sprite(0, -CELL_HEIGHT/2, this.key).setDepth(1)
+    this.unitSprite = this.scene.add.sprite(0, 0, this.key).setDepth(1)
+    this.unitSprite.setPosition(0, -this.unitSprite.getBounds().height/2)
 
     this.unitContainer = this.scene.add.container(positionInWorld.x, positionInWorld.y)
     this.unitContainer.add(this.unitSprite)
@@ -47,8 +48,7 @@ export class Unit {
 
   update(time: number, delta: number) {
     const positionInWorld = getWorldCenterForTile(this.position)
-    this.unitContainer.setPosition(positionInWorld.x, positionInWorld.y)
-
+    // this.unitContainer.setPosition(positionInWorld.x, positionInWorld.y)
 
     const walkingFrame = Math.floor(time / 150) % 4
     const frame = walkingFrame === 3 ? 1 : walkingFrame
@@ -90,25 +90,28 @@ export class Unit {
     })
   }
 
-  move() {
+
+
+  move(moveComplete: () => void) {
+    this.isMoving = true
     if (this.calculatedPath.length === 0) return
-    // this.position = this.targetPosition
     const worldPosition = getWorldCenterForTile(this.position)
     const targetPosition = getWorldCenterForTile(this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y))
+
     var tween = this.scene.tweens.add({
-      targets: this.unitSprite,
-      x: targetPosition.x - worldPosition.x,
-      y: targetPosition.y - worldPosition.y,
-      ease: 'linear',
-      duration: 2000,
+      targets: this.unitContainer,
+      x: targetPosition.x,
+      y: targetPosition.y,
+      ease: 'Cubic.easeInOut',
+      duration: CELL_MOVEMENT_DURATION,
       onStart: function () { console.log('onStart'); console.log(arguments) },
       onComplete: () => {
         console.log('onComplete')
-        console.log(arguments)
         this.position = this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y)
         this.calculatedPath.shift()
-        this.unitSprite.setPosition(0, -CELL_HEIGHT/2)
         this.unitContainer.setPosition(targetPosition.x, targetPosition.y)
+        this.isMoving = false
+        moveComplete()
       },
     })
   }

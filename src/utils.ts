@@ -7,6 +7,14 @@ export const getWorldCenterForTile = (tile: Phaser.Tilemaps.Tile) => {
   }
 }
 
+export const getSpriteCenterForTile = (sprite: Phaser.GameObjects.Sprite) => {
+  const bounds = sprite.getBounds()
+  return {
+    x: bounds.x,
+    y: bounds.y,
+  }
+}
+
 export function createScene<T extends Phaser.Scene>(c: new () => T): T {
   return new c()
 }
