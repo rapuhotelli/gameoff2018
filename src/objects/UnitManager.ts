@@ -52,8 +52,11 @@ export class UnitManager {
     this.units.map((unit: Unit) => unit.update(time, delta))
   }
 
-  move() {
-    this.units.map((unit: Unit) => unit.move(() => {}))
+  move(resolve: () => void): void {
+    const movementPromises = this.units.map((unit: Unit) => {
+      return unit.move()
+    })
+    Promise.all(movementPromises).then(() => resolve() )
   }
 
   getUnitAt(position: GridPosition) {

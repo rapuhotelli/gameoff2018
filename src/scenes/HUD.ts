@@ -1,7 +1,8 @@
 import 'phaser'
 import { GAME_HEIGHT, GAME_WIDTH, HEADER_FOOTER_HEIGHT } from '../config'
 import { EndTurnButton } from '../objects/Button'
-import { createDebugger, sceneBridge } from '../utils'
+import { beginActionPhase, debugLog } from '../objects/events'
+import { createDebugger, registerDebugger } from '../utils'
 
 export class HUD extends Phaser.Scene {
   
@@ -14,8 +15,7 @@ export class HUD extends Phaser.Scene {
       key: 'HUD',
       active: true,
     })
-    this.debugger = () => { console.warn('debugger unavailable'); return false }
-    sceneBridge.connect(this, 'HUD')
+    // sceneBridge.connect(this, 'HUD')
   }
 
   public debug(text: string) {
@@ -45,12 +45,16 @@ export class HUD extends Phaser.Scene {
   create() {
     // this.mainScene = sceneBridge.get('MainScene')
 
-    this.debugger = createDebugger(true, this.add.text(50, 50, 'null'))
+    // this.debugger = createDebugger(true, this.add.text(50, 50, 'null'))
+    registerDebugger(this.add.text(50, 50, 'null'))
 
     this.endTurnButton = new EndTurnButton(this)
     this.endTurnButton.setOnPress(() => {
-      sceneBridge.get('LevelManager').endTurn()
-      this.debugger('END TURN')
+      
+      // sceneBridge.get('LevelManager').endTurn()
+      // this.debugger('END TURN')
+      debugLog('END TURN')
+      beginActionPhase()
     })
     this.endTurnButton.create()
 

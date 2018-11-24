@@ -8,8 +8,8 @@ import {
 } from '../config'
 import * as levelData from '../levels/'
 import { debounce } from '../utils'
-import { sceneBridge } from '../utils'
 import { ActionPhase } from './ActionPhase'
+import { BEGIN_ACTION_PHASE, debugLog, globalEventEmitter } from './events'
 import { GridPosition, UnitManager } from './UnitManager'
 
 enum GamePhase {
@@ -53,7 +53,7 @@ export default class LevelManager extends Phaser.Scene {
     })
     
     this.gamePhase = GamePhase.Plan
-    sceneBridge.connect(this, 'LevelManager')
+    globalEventEmitter.on(BEGIN_ACTION_PHASE, this.endTurn, this)
     
     this.easystar = new Easystar.js()
     this.pathIndicators = []
@@ -93,7 +93,7 @@ export default class LevelManager extends Phaser.Scene {
 
       const position = {x: sourceTileX, y: sourceTileY}
 
-      sceneBridge.get('HUD').debugger(`${sourceTileX} ${sourceTileY}`)
+      debugLog(`${sourceTileX} ${sourceTileY}`)
       this.data.set('selectedTile', position)
 
       if (this.selectedTileIndicator) {
@@ -205,8 +205,9 @@ export default class LevelManager extends Phaser.Scene {
     this.gamePhase = GamePhase.Act
 
     const moves = this.unitManager.getRoundMoveCount()
-    sceneBridge.get('HUD').debugger(`Starting ActionPhase`)
-    sceneBridge.get('HUD').debugger(`Moves: ${moves}`)
+    
+    debugLog(`Starting ActionPhase`)
+    debugLog(`Moves: ${moves}`)
 
     const onComplete = () => {
       this.gamePhase = GamePhase.Plan

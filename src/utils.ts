@@ -1,4 +1,6 @@
 import { CELL_HEIGHT, CELL_WIDTH, GRID_HEIGHT, GRID_WIDTH } from './config'
+import { DEBUG_MESSAGE, globalEventEmitter } from './objects/events'
+import LevelManager from './objects/LevelManager'
 
 export const getWorldCenterForTile = (tile: Phaser.Tilemaps.Tile) => {
   return {
@@ -32,6 +34,19 @@ export const createDebugger = (enabled: boolean = false, textField: Phaser.GameO
   }
 }
 
+export const registerDebugger = (textField: Phaser.GameObjects.Text) => {
+  const messages: string[] = []
+  const messageLimit = 20
+  globalEventEmitter.on(DEBUG_MESSAGE, (text: string) => {
+    messages.push(text)
+    if (messages.length > messageLimit) {
+      messages.shift()
+    }
+    textField.setText(messages.join('\n'))
+  })
+}
+
+
 export function debounce(func: any, wait: number = 200, immediate: boolean = true) {
   let timeout: number | undefined
   return function() {
@@ -54,19 +69,3 @@ interface ISceneList {
   [name: string]: any // extends Phaser.Scene
 }
 const scenes: ISceneList = {}
-
-export const sceneBridge = {
-  connect: function<T extends Phaser.Scene>(scene: T, name: string) {
-    console.log('Connecting ', name)
-    scenes[name] = scene
-  },
-  get(name: string) {
-    return scenes[name]
-  },
-}
-
-const TurnManager = (options: any) => {
-  let turn = 0
-
-
-}

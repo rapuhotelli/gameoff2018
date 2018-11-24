@@ -81,7 +81,6 @@ export class Unit {
       return
     }
     this.calculatedPath = calculatedPath
-    console.log(this.calculatedPath)
     this.pathIndicators.map(pi => pi.destroy())
     this.pathIndicators = []
     this.pathIndicators = this.calculatedPath.map(p => {
@@ -92,27 +91,30 @@ export class Unit {
 
 
 
-  move(moveComplete: () => void) {
-    this.isMoving = true
-    if (this.calculatedPath.length === 0) return
-    const worldPosition = getWorldCenterForTile(this.position)
-    const targetPosition = getWorldCenterForTile(this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y))
+  move() {
+    return new Promise(resolve => {
+      this.isMoving = true
+      this.setSelected(false)
+      this.pathIndicators.map(pi => pi.destroy(true))
+      if (this.calculatedPath.length === 0) return
+      const worldPosition = getWorldCenterForTile(this.position)
+      const targetPosition = getWorldCenterForTile(this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y))
 
-    var tween = this.scene.tweens.add({
-      targets: this.unitContainer,
-      x: targetPosition.x,
-      y: targetPosition.y,
-      ease: 'Cubic.easeInOut',
-      duration: CELL_MOVEMENT_DURATION,
-      onStart: function () { console.log('onStart'); console.log(arguments) },
-      onComplete: () => {
-        console.log('onComplete')
-        this.position = this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y)
-        this.calculatedPath.shift()
-        this.unitContainer.setPosition(targetPosition.x, targetPosition.y)
-        this.isMoving = false
-        moveComplete()
-      },
+      var tween = this.scene.tweens.add({
+        targets: this.unitContainer,
+        x: targetPosition.x,
+        y: targetPosition.y,
+        ease: 'Cubic.easeInOut',
+        duration: CELL_MOVEMENT_DURATION,
+        onStart: function () { console.log('onStart'); console.log(arguments) },
+        onComplete: () => {
+          this.position = this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y)
+          this.calculatedPath.shift()
+          this.unitContainer.setPosition(targetPosition.x, targetPosition.y)
+          this.isMoving = false
+          resolve()
+        },
+      })
     })
   }
 

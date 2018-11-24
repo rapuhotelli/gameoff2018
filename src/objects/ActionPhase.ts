@@ -6,19 +6,16 @@ enum Actions {
 }
 
 export class ActionPhase {
-  private sequenceIndex: number
+  private currentMove: number
+  private moves: number
   private unitManager: UnitManager
-  private sequence: Actions[]
   private onComplete: () => void
 
-  constructor(steps: number, unitManager: UnitManager, onComplete: () => void) {
+  constructor(moves: number, unitManager: UnitManager, onComplete: () => void) {
     this.unitManager = unitManager
     this.onComplete = onComplete
-    this.sequenceIndex = 0
-    this.sequence = []
-    for (let i = 0; i < steps; i++) {
-      this.sequence.push(Actions.Movement, Actions.Attack)
-    }
+    this.moves = moves
+    this.currentMove = 0
     this.nextAction()
   }
 
@@ -27,30 +24,31 @@ export class ActionPhase {
   }
 
   nextAction() {
-    if (this.sequenceIndex === this.sequence.length * 2) {
+    if (this.currentMove === this.moves) {
       return this.onComplete()
     }
-
-    ei näin, peräkkäin vain move ja action
-    switch (this.sequence[this.sequenceIndex++]) {
-      case Actions.Movement:
-        this.doMovementAction()
-        break
-      case Actions.Attack:
-        this.doAttackAction()
-        break
-    }
+    
+    this.doMovementAction()
+      .then(() => {
+        console.log('doMovementAction done')
+        /*
+        this.doAttackAction().then(() => {
+          this.currentMove++
+          this.nextAction()
+        })
+        */
+      })
   }
 
-  doMovementAction() {
+  doMovementAction(): Promise<void> {
     console.log('doMovementAction')
-    this.unitManager.move() then attackAction
-
+    return new Promise(resolve => {
+      this.unitManager.move(resolve) // then attackAction
+    })
   }
 
   doAttackAction() {
-    const attacks = this.unitManager.getAttacks() // [0] = first attack (who attacks which tile), [1] = second attack..
-    attacks promise chain until all attacks are exhausted ?
-
+    // const attacks = this.unitManager.getAttacks() // [0] = first attack (who attacks which tile), [1] = second attack..
+    // attacks promise chain until all attacks are exhausted ?
   }
 }
