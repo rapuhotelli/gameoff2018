@@ -96,17 +96,19 @@ export class Unit {
       this.isMoving = true
       this.setSelected(false)
       this.pathIndicators.map(pi => pi.destroy(true))
-      if (this.calculatedPath.length === 0) return
+      if (this.calculatedPath.length === 0) return resolve()
       const worldPosition = getWorldCenterForTile(this.position)
       const targetPosition = getWorldCenterForTile(this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y))
-
+      
+      // todo convert to events
+      
       var tween = this.scene.tweens.add({
         targets: this.unitContainer,
         x: targetPosition.x,
         y: targetPosition.y,
         ease: 'Cubic.easeInOut',
         duration: CELL_MOVEMENT_DURATION,
-        onStart: function () { console.log('onStart'); console.log(arguments) },
+        // onStart: function () { console.log('onStart'); console.log(arguments) },
         onComplete: () => {
           this.position = this.gridMap.getTileAt(this.calculatedPath[0].x, this.calculatedPath[0].y)
           this.calculatedPath.shift()

@@ -1,3 +1,4 @@
+import { debugLog } from './events'
 import { UnitManager } from './UnitManager'
 
 enum Actions {
@@ -25,18 +26,23 @@ export class ActionPhase {
 
   nextAction() {
     if (this.currentMove === this.moves) {
+      debugLog('Out of moves')
       return this.onComplete()
     }
     
     this.doMovementAction()
       .then(() => {
         console.log('doMovementAction done')
+        return this.doAttackAction()
         /*
         this.doAttackAction().then(() => {
           this.currentMove++
           this.nextAction()
         })
         */
+      }).then(() => {
+        this.currentMove++
+        this.nextAction()
       })
   }
 
@@ -48,6 +54,12 @@ export class ActionPhase {
   }
 
   doAttackAction() {
+    return new Promise(resolve => {
+      const attacks = this.unitManager.getAttacks()
+      // for each attack, do animation in sequence, then resolve
+      console.log(attacks)
+      resolve()
+    })
     // const attacks = this.unitManager.getAttacks() // [0] = first attack (who attacks which tile), [1] = second attack..
     // attacks promise chain until all attacks are exhausted ?
   }

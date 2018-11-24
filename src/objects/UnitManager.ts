@@ -71,6 +71,22 @@ export class UnitManager {
     })
     selectUnit.setSelected(true)
   }
+  
+  getAttacks() {
+    const attacks:any = []
+    this.units.forEach((unit: Unit) => {
+      // TODO get unit attack type and detect in different ways
+      const vec = new Phaser.Math.Vector2(unit.getPosition().x, unit.getPosition().y)
+      this.units.forEach((targetUnit: Unit) => {
+        if (unit !== targetUnit) {
+          if (vec.distance(new Phaser.Math.Vector2(targetUnit.getPosition().x, targetUnit.getPosition().y)) < 3) {
+            attacks.push({from: unit.getPosition(), to: targetUnit.getPosition(), type: 'test'})
+          }
+        }
+      })
+    })
+    return attacks
+  }
 
   getRoundMoveCount() {
     let moves = 0

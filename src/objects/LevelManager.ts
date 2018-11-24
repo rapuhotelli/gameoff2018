@@ -94,7 +94,7 @@ export default class LevelManager extends Phaser.Scene {
       const position = {x: sourceTileX, y: sourceTileY}
 
       debugLog(`${sourceTileX} ${sourceTileY}`)
-      this.data.set('selectedTile', position)
+      this.data.set('selectedTile', position) // remove
 
       if (this.selectedTileIndicator) {
         this.selectedTileIndicator.destroy()
