@@ -19,6 +19,7 @@ const config: GameConfig = {
   // @ts-ignore
   scale: {
     // @ts-ignore
+    // @ts-ignore
     mode: Phaser.DOM.CONTAIN,
     width: GAME_WIDTH,
     height: GAME_HEIGHT,

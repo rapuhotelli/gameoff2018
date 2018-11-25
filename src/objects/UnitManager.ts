@@ -65,11 +65,15 @@ export class UnitManager {
     })
   }
 
-  setSelectedUnit(selectUnit: Unit) {
+  selectUnit(unit: Unit) {
+    this.deselect()
+    unit.setSelected(true)
+  }
+  
+  deselect() {
     this.units.map((unit: Unit) => {
       unit.setSelected(false)
     })
-    selectUnit.setSelected(true)
   }
   
   getAttacks() {

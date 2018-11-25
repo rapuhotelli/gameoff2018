@@ -28,7 +28,7 @@ export default class LevelManager extends Phaser.Scene {
   private readonly cursorPosition: {x: number, y: number}
   private unitManager: UnitManager
   private gamePhase: GamePhase
-  private selectedPlayer: integer
+  private selectedPlayer: number | null
   private numberKeys: Array<Phaser.Input.Keyboard.Key>
   private endTurnKey: Phaser.Input.Keyboard.Key
   
@@ -84,7 +84,7 @@ export default class LevelManager extends Phaser.Scene {
     grid.setOrigin(0, 0)
 
 
-    this.selectedPlayer = 0
+    this.selectedPlayer = null
 
     this.clickTile = debounce(() => {
       const sourceTileX = this.gridMap.worldToTileX(this.cursorPosition.x)
@@ -105,19 +105,26 @@ export default class LevelManager extends Phaser.Scene {
 
       if (unitInTile) {
         this.selectedPlayer = this.unitManager.units.indexOf(unitInTile)
-        this.unitManager.setSelectedUnit(unitInTile)
+        this.unitManager.selectUnit(unitInTile)
         // add
       } else {
-        this.selectedTileIndicator = this.add.rectangle(
-          clickedTile.getCenterX(),
-          clickedTile.getCenterY(),
-          CELL_WIDTH, CELL_HEIGHT,
-          0x22ff00,
-          0.6,
-        )
-        this.selectedTileIndicator.setFillStyle(0x22ff00, 0.6)
-
-        this.unitManager.units[this.selectedPlayer].setDestination(position, this.calculatedPath)
+        if (this.selectedPlayer !== null) {
+          /*
+          this.selectedTileIndicator = this.add.rectangle(
+            clickedTile.getCenterX(),
+            clickedTile.getCenterY(),
+            CELL_WIDTH, CELL_HEIGHT,
+            0x22ff00,
+            0.6,
+          )
+          this.selectedTileIndicator.setFillStyle(0x22ff00, 0.6)
+          */
+          this.pathIndicators.map(pi => pi.destroy())
+          this.pathIndicators = []
+          this.unitManager.units[this.selectedPlayer].setDestination(position, this.calculatedPath)
+          this.selectedPlayer = null
+          this.unitManager.deselect()
+        }
       }
     })
 
@@ -144,13 +151,13 @@ export default class LevelManager extends Phaser.Scene {
       }
     }
     
-    if (this.cursorHoverTile !== cursorTile) {
+
+    if (this.cursorHoverTile !== cursorTile && this.selectedPlayer !== null) {
       this.cursorHoverTile = cursorTile
       console.log('tile changed')
 
       this.pathIndicators.map(pi => pi.destroy())
       this.pathIndicators = []
-
       
       if (cursorTile) {
         const charpos = this.unitManager.units[this.selectedPlayer].getPosition()
