@@ -9,31 +9,14 @@ console.log('GRID SIZE', GRID_WIDTH, GRID_HEIGHT)
 console.log('CELL SIZE', CELL_WIDTH, CELL_HEIGHT)
 
 const config: GameConfig = {
-  /*
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
-  */
   type: Phaser.AUTO,
   parent: 'game',
   scene: [MainScene, HUD],
   // @ts-ignore
-  scale: {
-    // @ts-ignore
-    // @ts-ignore
-    mode: Phaser.DOM.CONTAIN,
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
-    min: {
-      width: GAME_WIDTH,
-      height: GAME_HEIGHT,
-    },
-    max: {
-      width: GAME_WIDTH*2,
-      height: GAME_HEIGHT*2,
-    },
-  },
   // @ts-ignore
-  // zoom: 2,
+  zoom: 2,
   // @ts-ignore
   pixelArt: true,
   // @ts-ignore
@@ -69,12 +52,11 @@ function resize(game: any) {
 
 window.onload = () => {
   const game:any = new Game(config)
-  /*
+
   if (((game.config.width * game.config.zoom) > window.innerWidth) || ((game.config.height * game.config.zoom) > window.innerHeight)) {
     resize(game)
   } else {
     game.canvas.style.width = (game.config.width * game.config.zoom).toString() + 'px'
     game.canvas.style.height = (game.config.height * game.config.zoom).toString() + 'px'
   }
-  */
 }

@@ -73,16 +73,17 @@ export default class LevelManager extends Phaser.Scene {
     this.easystar.enableSync()
     
     this.gridMap = this.make.tilemap({ data: this.levelData.tileData, tileWidth: CELL_WIDTH, tileHeight: CELL_HEIGHT})
-    const tiles = this.gridMap.addTilesetImage('tileset', undefined, 32, 28)
+    const tiles = this.gridMap.addTilesetImage('tileset', undefined, CELL_WIDTH, CELL_HEIGHT)
     const layer = this.gridMap.createStaticLayer(0, tiles, 0, HEADER_FOOTER_HEIGHT)
 
     this.gridCursor = this.add.graphics({ lineStyle: { width: 2, color: 0x000000, alpha: 1 } })
     this.gridCursor.strokeRect(0, 0, CELL_WIDTH, CELL_HEIGHT)
     this.gridCursor.setPosition(0, 0)
     
+    /*
     const grid = this.add.grid(0, HEADER_FOOTER_HEIGHT, GAME_WIDTH, LEVEL_HEIGHT, CELL_WIDTH, CELL_HEIGHT, 0x000000, 0, 0x333333, 0.3)
     grid.setOrigin(0, 0)
-
+    */
 
     this.selectedPlayer = null
 
