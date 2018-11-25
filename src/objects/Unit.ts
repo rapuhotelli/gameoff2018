@@ -1,12 +1,13 @@
 import { CELL_HEIGHT, CELL_MOVEMENT_DURATION, CELL_WIDTH } from '../config'
+import { AI, IEnemyCharacterConfig, IPlayerCharacterConfig } from '../levels'
 import { getSpriteCenterForTile, getWorldCenterForTile } from '../utils'
-import { GridPosition, IUnitOptions } from './UnitManager'
+import { GridPosition } from './UnitManager'
 
 export class Unit {
   private scene: Phaser.Scene
   private readonly sheet: string
   private readonly key: string
-  private options: IUnitOptions
+  public options: IPlayerCharacterConfig | IEnemyCharacterConfig
   private gridMap: Phaser.Tilemaps.Tilemap // reference to scene grid map (todo make own layer?)
   private targetPosition: Phaser.Tilemaps.Tile // position to end up at after movement
   private position: Phaser.Tilemaps.Tile // current game state position
@@ -20,9 +21,11 @@ export class Unit {
   private pathIndicators: Phaser.GameObjects.Rectangle[]
   private isMoving: boolean
 
-  constructor(scene: Phaser.Scene, characterIndex: number, options: IUnitOptions) {
+  constructor(scene: Phaser.Scene, characterIndex: number, options: IPlayerCharacterConfig | IEnemyCharacterConfig) {
     this.scene = scene
-    this.key = `pc${characterIndex}`
+ 
+    this.key = (options.ai === AI.Player) ? `pc_${characterIndex}` : `mob_${characterIndex}`
+    
     this.options = options
     this.selectionCircle = null
     this.calculatedPath = []
@@ -30,7 +33,7 @@ export class Unit {
   }
 
   preload() {
-    this.scene.load.spritesheet(this.key, `assets/${this.options.spriteSheet}.png`, { frameWidth: 24, frameHeight: 32 })
+    this.scene.load.spritesheet(this.key, `assets/${this.options.spriteSheet}.png`, { frameWidth: 16, frameHeight: 20 })
   }
 
   create(gridMap: Phaser.Tilemaps.Tilemap) {
@@ -52,7 +55,7 @@ export class Unit {
 
     const walkingFrame = Math.floor(time / 150) % 4
     const frame = walkingFrame === 3 ? 1 : walkingFrame
-    this.unitSprite.setFrame(12 + frame)
+    this.unitSprite.setFrame(frame)
   }
 
   setSelected(select: boolean) {

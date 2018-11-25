@@ -1,3 +1,5 @@
+import { AI, IEnemyCharacterConfig, IPlayerCharacterConfig } from './index'
+
 export const tileData = [
 // 1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20                                      30      32
   [0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 1
@@ -29,17 +31,14 @@ export const tileData = [
 
 export const tileSet = 'tileset1'
 
-enum AI {
-  Player,
-  Idiot,
-}
 
-export const playerCharacters = [
+
+export const playerCharacters: Array<IPlayerCharacterConfig> = [
   {
     ai: AI.Player,
     name: 'durr',
     speed: 3,
-    spriteSheet: 'Bard-M-01',
+    spriteSheet: 'maagiukko',
     maxHealth: 100,
     startingPosition: {x: 10, y: 6},
   },
@@ -47,7 +46,7 @@ export const playerCharacters = [
     ai: AI.Player,
     name: 'derp',
     speed: 3,
-    spriteSheet: 'Bard-M-01',
+    spriteSheet: 'maagiukko',
     maxHealth: 100,
     startingPosition: {x: 11, y: 6},
   },
@@ -55,7 +54,7 @@ export const playerCharacters = [
     ai: AI.Player,
     name: 'Hurr!',
     speed: 3,
-    spriteSheet: 'Bard-M-01',
+    spriteSheet: 'maagiukko',
     maxHealth: 100,
     startingPosition: {x: 12, y: 6},
   },
@@ -63,8 +62,29 @@ export const playerCharacters = [
     ai: AI.Player,
     name: 'Lohiposki',
     speed: 3,
-    spriteSheet: 'Bard-M-01',
+    spriteSheet: 'maagiukko',
     maxHealth: 100,
     startingPosition: {x: 13, y: 6},
+  },
+]
+
+export const enemyCharacters: Array<IEnemyCharacterConfig> = [
+  {
+    round: 0,
+    ai: AI.Idiot,
+    name: 'Test monster',
+    speed: 3,
+    spriteSheet: 'mobtest',
+    maxHealth: 100,
+    startingPosition: {x: 31, y: 19},
+  },
+  {
+    round: 0,
+    ai: AI.Idiot,
+    name: 'Test monster',
+    speed: 3,
+    spriteSheet: 'mobtest',
+    maxHealth: 100,
+    startingPosition: {x: 20, y: 18},
   },
 ]

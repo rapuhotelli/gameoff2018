@@ -1,25 +1,10 @@
-
 // ToDo: add character layer
+import { AI, IEnemyCharacterConfig, IPlayerCharacterConfig } from '../levels'
 import { Unit } from './Unit'
-
-export interface IUnitManager {
-  newUnit: (options: IUnitOptions) => void
-  preloadAll: () => void
-  createAll: (gridMap: Phaser.Tilemaps.Tilemap) => void
-  updateAll: (time: number, delta: number) => void
-  units: Array<Unit>
-  move: () => void
-}
 
 export interface GridPosition {
   x: number,
   y: number,
-}
-
-export interface IUnitOptions {
-  startingPosition: GridPosition
-  spriteSheet: string
-  // position: Phaser.Tilemaps.Tile
 }
 
 export class UnitManager {
@@ -36,7 +21,7 @@ export class UnitManager {
   }
 
   // ToDo add better options
-  newUnit(options: IUnitOptions) {
+  newUnit(options: IPlayerCharacterConfig | IEnemyCharacterConfig) {
     this.units[this.characterIndex] = new Unit(this.scene, this.characterIndex++, options)
   }
 
@@ -66,14 +51,20 @@ export class UnitManager {
   }
 
   selectUnit(unit: Unit) {
-    this.deselect()
-    unit.setSelected(true)
+    if (unit.options.ai === AI.Player) {
+      this.deselect()
+      unit.setSelected(true)
+    }
   }
   
   deselect() {
     this.units.map((unit: Unit) => {
       unit.setSelected(false)
     })
+  }
+  
+  getAIMovement() {
+    
   }
   
   getAttacks() {

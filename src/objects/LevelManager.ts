@@ -7,10 +7,12 @@ import {
   LEVEL_HEIGHT,
 } from '../config'
 import * as levelData from '../levels/'
+import { enemyCharacters } from '../levels/level0'
 import { debounce } from '../utils'
 import { ActionPhase } from './ActionPhase'
 import { BEGIN_ACTION_PHASE, debugLog, globalEventEmitter } from './events'
 import { GridPosition, UnitManager } from './UnitManager'
+import { AI } from '../levels/'
 
 enum GamePhase {
   // Init phase?
@@ -38,7 +40,7 @@ export default class LevelManager extends Phaser.Scene {
   private pathIndicators: Phaser.GameObjects.Rectangle[]
   private calculatedPath: Array<GridPosition>
 
-  private currentRound = 0
+  private currentRound: number
   
   constructor(key: string) {
     super(key)
@@ -48,8 +50,12 @@ export default class LevelManager extends Phaser.Scene {
 
     this.unitManager = new UnitManager(this)
 
+    // preload sprites used for this level
     this.levelData.playerCharacters.forEach(pc => {
       this.unitManager.newUnit(pc)
+    })
+    this.levelData.enemyCharacters.forEach(ec => {
+      this.unitManager.newUnit(ec)
     })
     
     this.gamePhase = GamePhase.Plan
@@ -63,6 +69,10 @@ export default class LevelManager extends Phaser.Scene {
   preload() {
     this.load.image('gridSquare', 'assets/grid-wide.png')
     this.load.image('tileset', `assets/${this.levelData.tileSet}.png`)
+    /*
+    const uniqueMobSprites = Array.from([...new Set(this.levelData.enemyCharacters.map(item => item.spriteSheet))])
+    uniqueMobSprites.forEach(spriteName => this.load.image(spriteName, `assets/${spriteName}.png`))
+    */
     this.unitManager.preloadAll()
   }
 
@@ -104,7 +114,7 @@ export default class LevelManager extends Phaser.Scene {
 
       const unitInTile = this.unitManager.getUnitAt(position)
 
-      if (unitInTile) {
+      if (unitInTile && unitInTile.options.ai === AI.Player) {
         this.selectedPlayer = this.unitManager.units.indexOf(unitInTile)
         this.unitManager.selectUnit(unitInTile)
         // add
@@ -138,8 +148,23 @@ export default class LevelManager extends Phaser.Scene {
       this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR),
     ]
     this.endTurnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+    // this.doRound()
   }
 
+  doRound() {
+    const newMobs = this.levelData.enemyCharacters.filter(enemyCharacter => {
+      return enemyCharacter.round === this.currentRound
+    })
+    console.log(newMobs)
+    return
+    if (newMobs) {
+      newMobs.forEach(newMob => {
+        this.unitManager.newUnit(newMob)
+      })
+    }
+    // this.levelData.enemyW
+  }
+  
   cursorChangedTile(cursorTile: Phaser.Tilemaps.Tile) {
     if (cursorTile) {
       if (!this.gridCursor.visible) {
